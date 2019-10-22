@@ -18,6 +18,7 @@ MVC Caching for Kentico MVC, extending the DancingGoat Caching Implementation to
 
         #endregion
 ```
+1. If your Application's class name in your Global.asax is not "MvcApplication", then replace `MvcApplication` in the `Infrastructure\Caching\Startup\DependencyResolverConfig.cs` file with your class name.
 1. Optionally create an override the GetVaryByCustomString method to your Application (see the [sample Globa.asax.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Global.asax.cs) GetVaryByCustomString method).
 
 # Installation for Kentico MVC Site (Manual)
@@ -25,10 +26,11 @@ MVC Caching for Kentico MVC, extending the DancingGoat Caching Implementation to
 1. Go to the [MVCCaching.Kentico](https://github.com/KenticoDevTrev/MVCCaching/tree/master/MVCCaching.Kentico) Folder on GitHub
 1. Copy and include the Infrastructure into your Kentico MVC Site
 1. Add the code found in the [Global.asax.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Global.asax.cs) Application_Start method into your application's Application_Start
+1. If your Application's class name in your Global.asax is not "MvcApplication", then replace `MvcApplication` in the `Infrastructure\Caching\Startup\DependencyResolverConfig.cs` file with your class name.
 1. Optionally add the [Globa.asax.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Global.asax.cs) GetVaryByCustomString method.
 
 # Usage
-1. See Documentation.md for full documentation
+1. See [Documentation.md](https://github.com/KenticoDevTrev/MVCCaching/blob/master/Documentation.md) for full documentation
 
 # Contributions, but fixes and License
 Feel free to Fork and submit pull requests to contribute.
