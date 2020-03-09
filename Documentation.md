@@ -27,6 +27,64 @@ The `CacheDependency` Attribute take a String with the `DependencyKeyFormat`.  Y
 
 Similar to the `CacheDependency`, except takes a Page Type and constructs the `node|sitename|pagetype|all` dependency.
 
+### DoNotCache Attribute
+
+The `DoNotCache` Attribute will bypass the automatic caching that occurs through the IRepository logic found in `CachingRepositoryDecorator.cs`  This is useful if you wish to either not cache, or wish to implement your own caching (using ICacheHelper / Kentico's CacheHelper).
+
+If you are upgrading from 12.29.0's MVCCaching, you may need to either specify to overwrite the `CachingRepositoryDecorator.cs` or manually merge in the following code into yours:
+
+``` 
+		/// <summary>
+        /// Returns the cached result for the specified method invocation, if possible. Otherwise proceeds with the invocation and caches the result.
+        /// Only results of methods starting with 'Get' are affected.
+        /// </summary>
+        /// <param name="invocation">Method invocation.</param>
+        public void Intercept(IInvocation invocation)
+        {
+            if (!mCacheEnabled || !invocation.Method.Name.StartsWith("Get", StringComparison.Ordinal))
+            {
+                invocation.Proceed();
+
+                return;
+            }
+
+            var returnType = invocation.Method.ReturnType;
+
+            var cacheDependencyAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<CacheDependencyAttribute>().ToList();
+			var doNotCacheAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<DoNotCacheAttribute>().ToList();
+
+            // Either Cache or Retrieve, can modify and include custom logic for DependencyCacheKey generation
+			if (doNotCacheAttributes.Count > 0) 
+			{
+				invocation.Proceed();
+			}
+			else if (cacheDependencyAttributes.Count > 0)
+            {
+                invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyFromAttributes(cacheDependencyAttributes, invocation.Arguments));
+            }
+            else if (typeof(TreeNode).IsAssignableFrom(returnType))
+            {
+                invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForPage(returnType));
+            }
+            else if (typeof(IEnumerable<TreeNode>).IsAssignableFrom(returnType))
+            {
+                invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForPage(returnType.GenericTypeArguments[0]));
+            }
+            else if (typeof(BaseInfo).IsAssignableFrom(returnType))
+            {
+                invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForObject(returnType));
+            }
+            else if (typeof(IEnumerable<BaseInfo>).IsAssignableFrom(returnType))
+            {
+                invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForObject(returnType.GenericTypeArguments[0]));
+            }
+            else
+            {
+                invocation.Proceed();
+            }
+        }
+```
+
 ### Nuances
 * If you apply custom `CacheDependency` attributes, these will be used only instead of the automatic dependency generation.
 * Both `CacheDependency` and `PagesCacheDependency` replace  `##SITENAME##` with the Current Site's Code Name in the DependencyKeyFormat thanks to the [CachingRepositoryDecorator.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Interceptor/CachingRepositoryDecorator.cs) `GetDependencyCacheKeyFromAttributes`
