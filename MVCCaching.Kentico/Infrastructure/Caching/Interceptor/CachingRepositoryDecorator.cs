@@ -55,9 +55,14 @@ namespace MVCCaching.Kentico
             var returnType = invocation.Method.ReturnType;
 
             var cacheDependencyAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<CacheDependencyAttribute>().ToList();
+			var doNotCacheAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<DoNotCacheAttribute>().ToList();
 
             // Either Cache or Retrieve, can modify and include custom logic for DependencyCacheKey generation
-            if (cacheDependencyAttributes.Count > 0)
+			if (doNotCacheAttributes.Count > 0) 
+			{
+				invocation.Proceed();
+			}
+			else if (cacheDependencyAttributes.Count > 0)
             {
                 invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyFromAttributes(cacheDependencyAttributes, invocation.Arguments));
             }

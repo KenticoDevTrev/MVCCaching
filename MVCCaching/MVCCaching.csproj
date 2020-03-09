@@ -544,6 +544,7 @@
   <ItemGroup>
     <Compile Include="Attributes\ActionResultCacheAttribute.cs" />
     <Compile Include="Attributes\CacheDependencyAttribute.cs" />
+    <Compile Include="Attributes\DoNotCacheAttribute.cs" />
     <Compile Include="Interfaces\ICacheHelper.cs" />
     <Compile Include="Interfaces\ICacheKey.cs" />
     <Compile Include="Interfaces\IOutputCacheDependenciesBase.cs" />
