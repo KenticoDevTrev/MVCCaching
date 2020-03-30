@@ -9,7 +9,10 @@ namespace MVCCaching.Kentico.Example
     {
         #region "These are abstracted out to Generic Models"
 
+        // Explicit Cache Dependency, along with the No Site and No Culture as this module does not have either
         [CacheDependency("example.examplemoduleclass|byid|{0}")]
+        [CacheNameNoSite]
+        [CacheNameNoCulture]
         public ExampleModuleClassModel GetExampleModuleClass(int ID)
         {
             var ExampleModuleClass = ExampleModuleClassInfoProvider.GetExampleModuleClassInfo(ID);
@@ -18,11 +21,6 @@ namespace MVCCaching.Kentico.Example
             {
                 Name = ExampleModuleClass?.ExampleModuleClassName
             };
-        }
-
-        public IEnumerable<string> GetExampleModuleClassCacheDependency(int ID)
-        {
-            return new string[] { $"example.examplemoduleclass|byid|{ID}"};
         }
 
         public IEnumerable<ExampleModuleClassModel> GetExampleModuleClasses()
@@ -37,11 +35,6 @@ namespace MVCCaching.Kentico.Example
                     Name = x.ExampleModuleClassName
                 };
             });
-        }
-
-        public IEnumerable<string> GetExampleModuleClassesCacheDependency()
-        {
-            return new string[] { $"example.examplemoduleclass|all" };
         }
 
         #endregion

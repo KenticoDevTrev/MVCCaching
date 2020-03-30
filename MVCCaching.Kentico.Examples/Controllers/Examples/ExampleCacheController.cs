@@ -39,13 +39,13 @@ namespace Boilerplate.Controllers.Examples
         }
 
         /// <summary>
-        /// This action, since it is not OutputCache'd, will always execute, however the mExampleRepo.GetExamplePage(ID) will return a cached result based on the ID, until that node is updated
+        /// This action, since it is not OutputCache'd will always execute, however the mExampleRepo.GetExamplePage(ID) will return a cached result based on the ID, until that node is updated
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
         public ActionResult IndexByID(int ID)
         {
-            // This call will be cached automaticall since it is a ".Get_____"
+            // This call will be cached automatically
             ExamplePageTypeModel ExamplePage = mExamplePageTypeRepo.GetExamplePage(ID);
             return View("Index", ExamplePage);
         }
@@ -59,11 +59,10 @@ namespace Boilerplate.Controllers.Examples
         [OutputCache(Duration = 600, VaryByCustom = "Example")]
         public ActionResult CachedView()
         {
-            // This call will be cached automaticall since it is a ".Get_____"
+            // This call will be cached automatically and the cache dependency keys will be added automatically to the output cache
             ExamplePageTypeModel ExamplePage = mExamplePageTypeRepo.GetExamplePages().FirstOrDefault();
 
-            // Add proper Cache Dependencies
-            mOutputCacheDependencies.AddCacheItemDependencies(mExamplePageTypeRepo.GetExamplePagesCacheDependency());
+            // Add a custom cache key
             mOutputCacheDependencies.AddCacheItemDependency("CustomKey");
             return View(ExamplePage);
         }
@@ -78,11 +77,10 @@ namespace Boilerplate.Controllers.Examples
         //[ActionResultCache(Duration = 600, VaryByParam = "ID;SomeString", VaryByCustom = "Example")]
         public ActionResult CachedViewByID(int ID, string SomeString)
         {
-            // This call will be cached automaticall since it is a ".Get_____"
+            // This call will be cached automatically, the cache dependency keys will be added automatically to the output cache
             ExamplePageTypeModel ExamplePage = mExamplePageTypeRepo.GetExamplePage(ID);
 
             // Add proper Cache Dependencies
-            mOutputCacheDependencies.AddCacheItemDependencies(mExamplePageTypeRepo.GetExamplePageCacheDependency(ID));
             mOutputCacheDependencies.AddCacheItemDependency("CustomKey");
             return View("CachedView", ExamplePage);
         }
@@ -97,11 +95,10 @@ namespace Boilerplate.Controllers.Examples
         [ActionResultCache(Duration = 600, VaryByParam = "ID;SomeString", VaryByCustom = "Example")]
         public ActionResult CachedActionByID(int ID, string SomeString)
         {
-            // This call will be cached automaticall since it is a ".Get_____"
+            // This call will be cached automatically and the cache dependency keys will be added automatically to the output cache
             ExamplePageTypeModel ExamplePage = mExamplePageTypeRepo.GetExamplePage(ID);
 
             // Add proper Cache Dependencies
-            mOutputCacheDependencies.AddCacheItemDependencies(mExamplePageTypeRepo.GetExamplePageCacheDependency(ID));
             mOutputCacheDependencies.AddCacheItemDependency("CustomKey");
             return View("CachedView", ExamplePage);
         }
@@ -126,11 +123,8 @@ namespace Boilerplate.Controllers.Examples
         [OutputCache(Duration = 600, VaryByParam = "*")]
         public ActionResult CachedPartialExample(int Index)
         {
-            // Get the Items
+            // Get the Items, the cache dependency keys will be added automatically to the output cache
             var Items = mExampleModuleClassRepo.GetExampleModuleClasses();
-
-            // Add cache dependency
-            mOutputCacheDependencies.AddCacheItemDependencies(mExampleModuleClassRepo.GetExampleModuleClassesCacheDependency());
 
             // Convert to View Model
             if (Items.Count() >= Index)
@@ -185,11 +179,8 @@ namespace Boilerplate.Controllers.Examples
         [OutputCache(Duration = 600, VaryByParam = "*")]
         public ActionResult CachedPartialExampleByID(int ID)
         {
-            // Get the Item
+            // Get the Item, the cache dependency keys will be added automatically to the output cache
             var Item = mExampleModuleClassRepo.GetExampleModuleClass(ID);
-
-            // Add cache dependency
-            mOutputCacheDependencies.AddCacheItemDependencies(mExampleModuleClassRepo.GetExampleModuleClassCacheDependency(ID));
 
             // Convert to View Model
             var Model = new ExampleModuleClassViewModel()
@@ -209,11 +200,8 @@ namespace Boilerplate.Controllers.Examples
         [OutputCache(Duration = 600, VaryByParam = "*")]
         public ActionResult CachedPartialExampleByID_BaseInfo(int ID)
         {
-            // Get the BaseInfo models
+            // Get the BaseInfo models, the cache dependency keys will be added automatically to the output cache
             var Item = mExampleModuleClassRepo.GetExampleModuleClass_BaseInfo(ID);
-
-            // Add cache dependency
-            mOutputCacheDependencies.AddDependencyOnInfoObject<ExampleModuleClassInfo>(Item.ExampleModuleClassGuid);
 
             // Convert to View Model
             var Model = new ExampleModuleClassModel()

@@ -46,16 +46,6 @@ namespace MVCCaching.Kentico.Example
         }
 
         /// <summary>
-        /// Gets the Cache Dependency for the given Example Page with the NodeID
-        /// </summary>
-        /// <param name="ID">The ID of the node</param>
-        /// <returns>The Cache Dependency Key</returns>
-        public IEnumerable<string> GetExamplePageCacheDependency(int ID)
-        {
-            return new string[] { $"nodeid|{ID}" };
-        }
-
-        /// <summary>
         /// Gets the specific Example Page.  Adding a specific cache dependency
         /// </summary>
         /// <param name="ID"></param>
@@ -77,8 +67,6 @@ namespace MVCCaching.Kentico.Example
                 ID = Page.NodeID
             };
         }
-
-
 
         /// <summary>
         /// Adds the cache "nodes|sitename|classname|all"
@@ -134,11 +122,6 @@ namespace MVCCaching.Kentico.Example
                     };
                 }).ToList();
             }, "KenticoExamplePageTypeRepository.GetExamplePages", GetExamplePagesCacheDependency(), mCacheHelper.CacheDuration());
-        }
-
-        public IEnumerable<string> GetExamplePagesCacheDependency()
-        {
-            return new string[] { $"nodes|{SiteContext.CurrentSiteName}|{ExamplePageType.TYPEINFO}|all" };
         }
 
         #endregion
