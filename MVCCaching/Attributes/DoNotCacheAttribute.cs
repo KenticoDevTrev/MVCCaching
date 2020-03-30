@@ -5,7 +5,7 @@ namespace MVCCaching
     /// <summary>
     /// Tells the built in Repository Caching to not use automatic caching.  You can implement your own caching instead.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class DoNotCacheAttribute : Attribute
     {
 
