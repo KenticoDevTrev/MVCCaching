@@ -1,3 +1,18 @@
+# Upgrading to 12.29.2
+If you are upgrading from 12.29.0 or 12.29.1's MVCCaching, you may need to either specify to overwrite the `CachingRepositoryDecorator.cs` during the NuGet update or manually merge the changes into yours.  Please see the latest [CachingRepositoryDecorator.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Interceptor/CachingRepositoryDecorator.cs), 12.29.2 made sweeping changes to the entire class.
+
+You also will need to update the [DependencyResolverConfig.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Startup/DependencyResolverConfig.cs) at with this code (passing the `IOutputCacheDependencies` to the `CachingRepositoryDecorator`'s constructor).
+
+``` csharp
+// Register caching decorator for repositories
+builder.Register(context => new CachingRepositoryDecorator(GetCacheItemDuration(), context.Resolve<IContentItemMetadataProvider>(), IsCacheEnabled(), context.Resolve<IOutputCacheDependencies>()))
+    .InstancePerRequest();
+```
+
+These changes enable automatic addition of the method's Cache Dependencies into the Request's Output Cache Dependencies.  This way if you leverage MVC OutputCache, it will gain the dependencies that your repositories also have automatically.
+
+Also, In 12.29.0 and 12.29.1, there was a requirement that the method start with `Get` in order to be cached, **this was removed in 2.29.2**
+
 # Caching – Data
 Data caching is specifically caching data retrieval operations, such as getting items from a database. Below are different tools that should be leveraged when caching data:
 
@@ -5,9 +20,15 @@ Data caching is specifically caching data retrieval operations, such as getting 
 Repository Caching is mostly handled automatically, using AutoFac and intercepts.
 
 ### How to Use
-1. Create an Interface that inherits `IRepository`, with methods that start with `Get`
+1. Create an Interface that inherits `IRepository`
 1. Create an implementation of that Repository
 1. If needed, Decorate methods with `[CacheDependency()]` attributes
+
+**Automatic Caching will occur under these conditions:**
+1. The Method is public.
+2. It does NOT contains `[DoNotCache]`
+3. It either contains 1 or more `[CacheDependency()]` attributes, or returns `TreeNode`, `IEnumerable<TreeNode>`, `BaseInfo`, or `IEnumerable<BaseInfo>`
+
 
 Autofac is set up to look for any method that starts with Get and implements the `IRepository` interface ([CachingRepositoryDecorator.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Interceptor/CachingRepositoryDecorator.cs)).  It then intercepts (`CachingRepositoryDecorator.Intercept`) these methods and then based on either the `CacheDependency` attributes, or the return type, it creates a Cache Dependency for the method and runs it through Kentico’s CacheHelper (`CachingRepositoryDecorator.GetCachedResult`).
 
@@ -31,58 +52,6 @@ Similar to the `CacheDependency`, except takes a Page Type and constructs the `n
 
 The `DoNotCache` Attribute will bypass the automatic caching that occurs through the IRepository logic found in `CachingRepositoryDecorator.cs`  This is useful if you wish to either not cache, or wish to implement your own caching (using ICacheHelper / Kentico's CacheHelper).
 
-If you are upgrading from 12.29.0's MVCCaching, you may need to either specify to overwrite the `CachingRepositoryDecorator.cs` or manually merge in the following code into yours:
-
-``` csharp
-/// <summary>
-/// Returns the cached result for the specified method invocation, if possible. Otherwise proceeds with the invocation and caches the result.
-/// Only results of methods starting with 'Get' are affected.
-/// </summary>
-/// <param name="invocation">Method invocation.</param>
-public void Intercept(IInvocation invocation)
-{
-	if (!mCacheEnabled || !invocation.Method.Name.StartsWith("Get", StringComparison.Ordinal))
-	{
-		invocation.Proceed();
-
-		return;
-	}
-	var returnType = invocation.Method.ReturnType;
-
-	var cacheDependencyAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<CacheDependencyAttribute>().ToList();
-	var doNotCacheAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<DoNotCacheAttribute>().ToList();
-
-	// Either Cache or Retrieve, can modify and include custom logic for DependencyCacheKey generation
-	if (doNotCacheAttributes.Count > 0) 
-	{
-		invocation.Proceed();
-	}
-	else if (cacheDependencyAttributes.Count > 0)
-	{
-		invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyFromAttributes(cacheDependencyAttributes, invocation.Arguments));
-	}
-	else if (typeof(TreeNode).IsAssignableFrom(returnType))
-	{
-		invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForPage(returnType));
-	}
-	else if (typeof(IEnumerable<TreeNode>).IsAssignableFrom(returnType))
-	{
-		invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForPage(returnType.GenericTypeArguments[0]));
-	}
-	else if (typeof(BaseInfo).IsAssignableFrom(returnType))
-	{
-		invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForObject(returnType));
-	}
-	else if (typeof(IEnumerable<BaseInfo>).IsAssignableFrom(returnType))
-	{
-		invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyForObject(returnType.GenericTypeArguments[0]));
-	}
-	else
-	{
-		invocation.Proceed();
-	}
-}
-```
 
 ### Nuances
 * If you apply custom `CacheDependency` attributes, these will be used only instead of the automatic dependency generation.
@@ -172,6 +141,146 @@ You can specify Header Parameters that should be included in the Cache Key creat
 ### VaryByCookie
 You can specify Cookie values that should be included in the Cache Key Creation.
 
+## Handling Dynamic Cache Dependency Keys
+There are situations where your cache dependency keys are more complicated than what can be created through the `[CacheDependency()]` Attribute.  Since the automatic caching and Output Cache Dependencies are only aware of the `[CacheDependency()]` attributes and the method's return type, in these situations it cannot automatically Cache nor add Output Cache Dependencies.
+
+For both examples, we'll use this method as our starting point:
+
+``` csharp
+// Sample starting method, has dynamic keys
+[DoNotCache]
+public IEnumerable<AccordionGroup> GetRelatedAccordionsComplex(Guid nodeGuid, int nodeId, string[] regionFilter = null)
+{
+    List<string> dependencyKeyList = new List<string>();
+    string siteName = SiteContext.CurrentSiteName;
+    return CacheHelper.Cache(cs =>
+    {
+        var query = AccordionGroupProvider.GetAccordionGroups()
+            .LatestVersion(_latestVersionEnabled)
+            .Published(!_latestVersionEnabled)
+            .InAdhocRelationshipWith(nodeId, "Accordions")
+            .Culture(_cultureName)
+            .OnSite(SiteContext.CurrentSiteName)
+            .CombineWithDefaultCulture();
+
+        IEnumerable<AccordionGroup> accordions = query.TypedResult;
+        if (accordions != null && accordions.Any())
+        {
+            dependencyKeyList.Add($"nodeid|{nodeId}|relationships");
+            dependencyKeyList.Add($"nodeguid|{siteName}|{nodeGuid}");
+            foreach (var accordion in accordions)
+            {
+                dependencyKeyList.Add($"nodeguid|{siteName}|{accordion.NodeGUID}");
+            }
+        }
+        if (cs.Cached)
+        {
+            cs.CacheDependency = CacheHelper.GetCacheDependency(dependencyKeyList.ToArray());
+        }
+        return accordions;
+    }, new CacheSettings(CacheHelper.CacheMinutes(SiteContext.CurrentSiteName), "dhp|data|accordionrelationship", siteName, _cultureName, _latestVersionEnabled, nodeGuid, regionFilter));
+}
+```
+
+**Split up the Methods (Ideal)**
+You may abe able to split up your method into multiple smaller methods that *can* be handled through normal caching.  For example, if you are getting a page's related items, you would have cache on both the Page's relationships and the related items found.
+
+So the above method can be split up into this:
+
+``` csharp
+// This method is from the interface itself.
+[DoNotCache]
+public IEnumerable<AccordionGroup> GetRelatedAccordions(Guid nodeGuid, int nodeId)
+{
+    // This is cached and it's dependencies added to output cache
+    IEnumerable<int> AccordionIDs = GetRelatedAccordionsIDs(nodeGuid, nodeId);
+    // This is cached and it's dependencies added to the output cache
+    IEnumerable<AccordionGroup> Accordions = AccordionIDs.Select(x => GetAccordion(x));
+    return Accordions;
+}
+
+[CacheDependency("nodeid|{1}|relationships")]
+[CacheDependency("nodeguid|##SITENAME###|{0}")]
+public IEnumerable<int> GetRelatedAccordionsIDs(Guid nodeGuid, int nodeId, string[] regionFilter = null)
+{
+    var query = AccordionGroupProvider.GetAccordionGroups()
+        .LatestVersion(_latestVersionEnabled)
+        .Published(!_latestVersionEnabled)
+        .InAdhocRelationshipWith(nodeId, "Accordions")
+        .Culture(_cultureName)
+        .OnSite(SiteContext.CurrentSiteName)
+        .CombineWithDefaultCulture()
+        .Columns("DocumentID");
+
+    return query.TypedResult.Select(x => x.DocumentID);
+}
+
+[CacheDependency("documentid|{0}")]
+public AccordionGroup GetAccordion(int DocumentID)
+{
+    return AccordionGroupProvider.GetAccordionGroups()
+        .WhereEquals("DocumentID", DocumentID)
+        .FirstOrDefault();
+}
+```
+
+**Returning the Ouput Cache Dependencies (doable but messy)**
+The other option is that in your Interface and implementation, you add an `out IEnumerable<string> OutputCacheDependencies` property to the method.  This would be a clear indicator to the coder that they need to handle the output cache dependency keys themselves in their usage of it.  It's not ideal by any stretch.
+
+This is what that would look like:
+
+``` csharp
+[DoNotCache]
+public IEnumerable<AccordionGroup> GetRelatedAccordions(Guid nodeGuid, int nodeId, out IEnumerable<string> OutputCacheDependencies)
+{
+    var siteName = SiteContext.CurrentSiteName;
+    var AccordionsWithKeys = CacheHelper.Cache(cs =>
+    {
+        var query = AccordionGroupProvider.GetAccordionGroups()
+            .LatestVersion(_latestVersionEnabled)
+            .Published(!_latestVersionEnabled)
+            .InAdhocRelationshipWith(nodeId, "Accordions")
+            .Culture(_cultureName)
+            .OnSite(SiteContext.CurrentSiteName)
+            .CombineWithDefaultCulture();
+
+        IEnumerable<AccordionGroup> accordions = query.TypedResult;
+
+        var dependencyKeyList = new List<string>();
+        if (accordions != null && accordions.Any())
+        {
+            dependencyKeyList.Add($"nodeid|{nodeId}|relationships");
+            dependencyKeyList.Add($"nodeguid|{siteName}|{nodeGuid}");
+            foreach (var accordion in accordions)
+            {
+                dependencyKeyList.Add($"nodeguid|{siteName}|{accordion.NodeGUID}");
+            }
+        }
+        if (cs.Cached)
+        {
+            cs.CacheDependency = CacheHelper.GetCacheDependency(dependencyKeyList.ToArray());
+        }
+        // Returning a Tuple so the dependency keys are passed back
+        return new Tuple<IEnumerable<AccordionGroup>, string[]>(accordions, dependencyKeyList.ToArray());
+    }, new CacheSettings(CacheHelper.CacheMinutes(SiteContext.CurrentSiteName), "dhp|data|accordionrelationship", siteName, _cultureName, _latestVersionEnabled, nodeGuid, regionFilter));
+    
+    // Set the output cache dependencies so the user can handle them
+    OutputCacheDependencies = AccordionsWithKeys.Item2;
+    
+    // Return the result
+    return AccordionsWithKeys.Item1;
+}
+```
+And the usage:
+``` csharp
+List<string> Dependencies = new List<string>();
+// Call from IAccordionRepository
+mAccordionRepository.GetRelatedAccordions(NodeGuid, NodeID, out Dependencies);
+// use IOutputCacheRepository to add them to the output cache
+mOutputCacheDependencies.AddCacheDependencies(Dependencies.ToArray());
+```
+
+
 ## Examples
 Please see the below files for examples:
 * [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController.cs) for multiple variations of `[OutputCache]` parameters
@@ -179,8 +288,8 @@ Please see the below files for examples:
 * [OutputCacheKeyOptionExtension.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Extensions/OutputCacheKeyOptionsExtension.cs) -> How to add `VaryByExtensions`
 * [ExampleCacheKey.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Extensions/ExampleCacheKey.cs) -> Example Cache Key implementation
 
-## Setting Cache Dependencies
-As with the Caching, Cache dependencies on your output cache are important.  How these operate is Cache Dependencies are added to the Current `HttpResponse`, then cache handlers can use those to find out which responses should be cleared when a cache dependency is touched.
+## Setting Output Cache Dependencies
+As with the Data Caching, Output Cache Dependencies are important.  How these operate is Cache Dependencies are added to the Current `HttpResponse`, then cache handlers can use those to find out which responses should be cleared when a cache dependency is touched.
 
 The [CMSRegistrationSource.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Implementations/CMSRegistrationSource.cs) implements Kentico’s various services which include it’s Cache Dependency checks and clearing of those caches when the appropriate elements are updated in the database.
 
@@ -190,8 +299,3 @@ To leverage this however, an `IOutputCacheDependency` interface was created to m
 1. On your Class Constructor, add a Private Member of type `IOutputCacheDependencies'
 1. Include `IOutputCacheDependencies OutputCacheDependencies` in your constructor, and save that value to your private member.
 1. Then, call the private member's `AddCacheItemDependencies(IEnumerable<string>)` or `AddCacheItemDependency(string)`. These will add the dependencies.
-
-### Note for Repositories Returning Generic Models
-When calling various Repositories, I recommend you include adding `IEnumerble<string> Get_____CacheDependencies()` methods , so even the cache keys can be abstracted out.  Since a cache dependency key may look different on Kentico EMS vs say Kentico Cloud or some other repository.
-
-See [ExampleCacheController](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController.cs).`CacheByActionID`
