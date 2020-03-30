@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Autofac.Extras.DynamicProxy2;
 using Autofac.Integration.Mvc;
+using Autofac.Extras.DynamicProxy;
 using CMS.DataEngine;
 using CMS.SiteProvider;
 using Kentico.Content.Web.Mvc;
@@ -39,16 +39,23 @@ namespace MVCCaching.Kentico
 
             // Register repositories that use IRepository, passing culture and LatestVersionEnabled
             builder.RegisterAssemblyTypes(typeof(MvcApplication).Assembly)
-                .Where(x => x.IsClass && !x.IsAbstract && typeof(IRepository).IsAssignableFrom(x))
-                .AsImplementedInterfaces()
-                .WithParameter((parameter, context) => parameter.Name == "cultureName", (parameter, context) => CultureInfo.CurrentUICulture.Name)
-                .WithParameter((parameter, context) => parameter.Name == "latestVersionEnabled", (parameter, context) => IsPreviewEnabled())
-                .EnableInterfaceInterceptors().InterceptedBy(typeof(CachingRepositoryDecorator))
-                .InstancePerRequest();
+                   .Where(x => x.IsClass && !x.IsAbstract && typeof(IRepository).IsAssignableFrom(x))
+                   .AsImplementedInterfaces()
+                   .WithParameter((parameter, context) => parameter.Name == "cultureName", (parameter, context) => CultureInfo.CurrentUICulture.Name)
+                   .WithParameter((parameter, context) => parameter.Name == "latestVersionEnabled", (parameter, context) => IsPreviewEnabled())
+                   .EnableInterfaceInterceptors()
+                   .InterceptedBy(typeof(CachingRepositoryDecorator))
+                   .InstancePerRequest();
 
             // Register services that use IService
             builder.RegisterAssemblyTypes(typeof(MvcApplication).Assembly)
                 .Where(x => x.IsClass && !x.IsAbstract && typeof(IService).IsAssignableFrom(x))
+                .AsImplementedInterfaces()
+                .InstancePerRequest();
+
+            // Register services that use IOutputCacheDependencies
+            builder.RegisterAssemblyTypes(typeof(MvcApplication).Assembly)
+                .Where(x => x.IsClass && !x.IsAbstract && typeof(IOutputCacheDependencies).IsAssignableFrom(x))
                 .AsImplementedInterfaces()
                 .InstancePerRequest();
 
@@ -58,7 +65,7 @@ namespace MVCCaching.Kentico
                 .SingleInstance();
 
             // Register caching decorator for repositories
-            builder.Register(context => new CachingRepositoryDecorator(GetCacheItemDuration(), context.Resolve<IContentItemMetadataProvider>(), IsCacheEnabled()))
+            builder.Register(context => new CachingRepositoryDecorator(GetCacheItemDuration(), context.Resolve<IContentItemMetadataProvider>(), IsCacheEnabled(), context.Resolve<IOutputCacheDependencies>()))
                 .InstancePerRequest();
 
             // Enable declaration of output cache dependencies in controllers

@@ -22,7 +22,7 @@ namespace MVCCaching.Kentico
         private readonly TimeSpan mCacheItemDuration;
         private readonly IContentItemMetadataProvider mContentItemMetadataProvider;
         private readonly bool mCacheEnabled;
-
+        private readonly IOutputCacheDependencies mOutputCacheDependencies;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CachingRepositoryDecorator"/> class.
@@ -30,11 +30,12 @@ namespace MVCCaching.Kentico
         /// <param name="cacheItemDuration">Time duration during which the repository method result is cached.</param>
         /// <param name="contentItemMetadataProvider">Object that provides information about pages and info objects using their runtime type.</param>
         /// <param name="cacheEnabled">Indicates whether caching is enabled.</param>
-        public CachingRepositoryDecorator(TimeSpan cacheItemDuration, IContentItemMetadataProvider contentItemMetadataProvider, bool cacheEnabled)
+        public CachingRepositoryDecorator(TimeSpan cacheItemDuration, IContentItemMetadataProvider contentItemMetadataProvider, bool cacheEnabled, IOutputCacheDependencies outputCacheDependencies)
         {
             mCacheItemDuration = cacheItemDuration;
             mContentItemMetadataProvider = contentItemMetadataProvider;
             mCacheEnabled = cacheEnabled;
+            mOutputCacheDependencies = outputCacheDependencies;
         }
 
 
@@ -45,7 +46,7 @@ namespace MVCCaching.Kentico
         /// <param name="invocation">Method invocation.</param>
         public void Intercept(IInvocation invocation)
         {
-            if (!mCacheEnabled || !invocation.Method.Name.StartsWith("Get", StringComparison.Ordinal))
+            if (!mCacheEnabled || !invocation.Method.IsPublic)
             {
                 invocation.Proceed();
 
@@ -55,14 +56,14 @@ namespace MVCCaching.Kentico
             var returnType = invocation.Method.ReturnType;
 
             var cacheDependencyAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<CacheDependencyAttribute>().ToList();
-			var doNotCacheAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<DoNotCacheAttribute>().ToList();
+            var doNotCacheAttributes = invocation.MethodInvocationTarget.GetCustomAttributes<DoNotCacheAttribute>().ToList();
 
             // Either Cache or Retrieve, can modify and include custom logic for DependencyCacheKey generation
-			if (doNotCacheAttributes.Count > 0) 
-			{
-				invocation.Proceed();
-			}
-			else if (cacheDependencyAttributes.Count > 0)
+            if (doNotCacheAttributes.Count > 0)
+            {
+                invocation.Proceed();
+            }
+            else if (cacheDependencyAttributes.Count > 0)
             {
                 invocation.ReturnValue = GetCachedResult(invocation, GetDependencyCacheKeyFromAttributes(cacheDependencyAttributes, invocation.Arguments));
             }
@@ -98,12 +99,15 @@ namespace MVCCaching.Kentico
         {
             var cacheKey = GetCacheItemKey(invocation);
             var cacheSettings = CreateCacheSettings(cacheKey, dependencyCacheKey);
+
+            // Add dependencies to output caching
+            mOutputCacheDependencies.AddCacheItemDependencies(dependencyCacheKey.Split(TextHelper.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+
             Func<Object> provideData = () =>
             {
                 invocation.Proceed();
                 return invocation.ReturnValue;
             };
-
             return CacheHelper.Cache(provideData, cacheSettings);
         }
 
@@ -114,12 +118,15 @@ namespace MVCCaching.Kentico
         /// <returns></returns>
         private string GetCacheItemKey(IInvocation invocation)
         {
+            var DoNotIncludeCultureInCacheName = invocation.MethodInvocationTarget.GetCustomAttributes<CacheNameNoCultureAttribute>().ToList().Count > 0;
+            var DoNotIncludeSiteInCacheName = invocation.MethodInvocationTarget.GetCustomAttributes<CacheNameNoSiteAttribute>().ToList().Count > 0;
+
             var builder = new StringBuilder(127)
                           .Append("CachingRepositoryDecorator|Data")
-                          .Append("|").Append(SiteContext.CurrentSiteName)
+                          .Append("|").Append(DoNotIncludeSiteInCacheName ? "" : SiteContext.CurrentSiteName)
                           .Append("|").Append(invocation.TargetType.FullName)
                           .Append("|").Append(invocation.Method.Name)
-                          .Append("|").Append(CultureInfo.CurrentCulture.Name);
+                          .Append("|").Append(DoNotIncludeCultureInCacheName ? "" : CultureInfo.CurrentCulture.Name);
 
             foreach (var value in invocation.Arguments)
             {
@@ -157,7 +164,18 @@ namespace MVCCaching.Kentico
         /// <returns></returns>
         private string GetDependencyCacheKeyFromAttributes(List<CacheDependencyAttribute> attributes, object[] methodArguments)
         {
-            return attributes.Select(attribute => attribute.ResolveKey(SiteContext.CurrentSiteName.ToLowerInvariant(), methodArguments)).Join(TextHelper.NewLine);
+            return GetDependencyCacheKeyArrayFromAttributes(attributes, methodArguments).Join(TextHelper.NewLine);
+        }
+
+        /// <summary>
+        /// Gets the Cache Dependency Keys from the given attributes
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <param name="methodArguments"></param>
+        /// <returns></returns>
+        private string[] GetDependencyCacheKeyArrayFromAttributes(List<CacheDependencyAttribute> attributes, object[] methodArguments)
+        {
+            return attributes.Select(attribute => attribute.ResolveKey(SiteContext.CurrentSiteName.ToLowerInvariant(), methodArguments)).ToArray();
         }
 
 
