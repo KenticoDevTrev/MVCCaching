@@ -37,6 +37,17 @@ If you are upgrading from 12.29.2, please first revert Autofac to 3.5.2, and uni
 # Usage
 1. See [Documentation.md](https://github.com/KenticoDevTrev/MVCCaching/blob/master/Documentation.md) for full documentation
 
+# Possible Castle.Core issue upon Upgrading
+If you upgrade and receive an error on your MVC site similar to `Could not load file or assembly Castle.Core, Version=4.0.0.0` or `Could not load file or assembly Castle.Core, Version=4.1.0.0`
+
+Go to your Web.config and look for the Castle.Core dependentAssembly tag, replace with this.  It's confusing but although 4.2.0.0 is installed, the binding redirect needs to go to 4.0.0.0
+ ```
+ <dependentAssembly>
+    <assemblyIdentity name="Castle.Core" publicKeyToken="407dd0808d44fbdc" culture="neutral" />
+    <bindingRedirect oldVersion="0.0.0.0-999.999.999.999" newVersion="4.0.0.0" />
+  </dependentAssembly>
+  ```
+
 # Contributions, but fixes and License
 Feel free to Fork and submit pull requests to contribute.
 
