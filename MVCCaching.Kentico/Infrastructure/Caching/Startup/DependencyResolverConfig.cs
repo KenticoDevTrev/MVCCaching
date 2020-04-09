@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
-using Autofac.Extras.DynamicProxy;
+using Autofac.Extras.DynamicProxy2;
 using CMS.DataEngine;
 using CMS.SiteProvider;
 using Kentico.Content.Web.Mvc;
