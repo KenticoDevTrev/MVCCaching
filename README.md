@@ -4,7 +4,7 @@ MVC Caching for Kentico MVC, extending the DancingGoat Caching Implementation to
 # Note on upgrading from 12.29.2
 In version 12.29.2, there was a dependency on Autofac 4.9.2 to accomodate the added package Autofac.Extras.DynamicProxy 4.3.0. This caused assembly binding issues in Castle.Core. I've reverted to Autofac 3.5.2 and Autofac.Extras.DynamicProxy2 3.0.7 which is more supported by Kentico MVC.
 
-If you are upgrading from 12.29.2, please first revert Autofac to 3.5.2, and uninstall Autofac.Extras.DynamicPRoxy before updating.
+If you are upgrading from 12.29.2, please first revert Autofac to 3.5.2, and uninstall Autofac.Extras.DynamicPRoxy after updating.
 
 # Installation for Kentico MVC Site (Quick)
 1. Install the `MVCCaching.Kentico` NuGet Package to your MVC Site
