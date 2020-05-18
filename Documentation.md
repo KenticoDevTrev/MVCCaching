@@ -183,7 +183,7 @@ public IEnumerable<AccordionGroup> GetRelatedAccordionsComplex(Guid nodeGuid, in
 ```
 
 **Split up the Methods (Ideal)**
-You may abe able to split up your method into multiple smaller methods that *can* be handled through normal caching.  For example, if you are getting a page's related items, you would have cache on both the Page's relationships and the related items found.
+You may abe able to split up your method into multiple smaller methods that *can* be handled through normal caching.  For example, if you are getting a page's related items, you would have cache on both the Page's relationships and the related items found.  Keep in mind though, that the automatic caching happens through the Interface Interceptor, which means you have to call the method *through your Dependency Injection* (using `DependencyResolver.Current.GetService<T>()`), or have these methods in a separate Interface that inherits the `IRepository` interface which you include in the default constructor of your implementation.
 
 So the above method can be split up into this:
 
@@ -192,10 +192,10 @@ So the above method can be split up into this:
 [DoNotCache]
 public IEnumerable<AccordionGroup> GetRelatedAccordions(Guid nodeGuid, int nodeId)
 {
-    // This is cached and it's dependencies added to output cache
-    IEnumerable<int> AccordionIDs = GetRelatedAccordionsIDs(nodeGuid, nodeId);
-    // This is cached and it's dependencies added to the output cache
-    IEnumerable<AccordionGroup> Accordions = AccordionIDs.Select(x => GetAccordion(x));
+    // This is called through the Dependency Injection and is cached and it's dependencies added to output cache
+    IEnumerable<int> AccordionIDs = DependencyResolver.Current.GetService<IAccordionRepository>().GetRelatedAccordionsIDs(nodeGuid, nodeId);
+    // This is called through the Dependency Injection and is cached and it's dependencies added to output cache
+    IEnumerable<AccordionGroup> Accordions = AccordionIDs.Select(x => DependencyResolver.Current.GetService<IAccordionRepository>().GetAccordion(x));
     return Accordions;
 }
 
