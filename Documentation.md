@@ -52,7 +52,6 @@ Similar to the `CacheDependency`, except takes a Page Type and constructs the `n
 
 The `DoNotCache` Attribute will bypass the automatic caching that occurs through the IRepository logic found in `CachingRepositoryDecorator.cs`  This is useful if you wish to either not cache, or wish to implement your own caching (using ICacheHelper / Kentico's CacheHelper).
 
-
 ### Nuances
 * If you apply custom `CacheDependency` attributes, these will be used only instead of the automatic dependency generation.
 * Both `CacheDependency` and `PagesCacheDependency` replace  `##SITENAME##` with the Current Site's Code Name in the DependencyKeyFormat thanks to the [CachingRepositoryDecorator.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Interceptor/CachingRepositoryDecorator.cs) `GetDependencyCacheKeyFromAttributes`
@@ -74,74 +73,7 @@ If you need something specifically cached, feel free to either use the `ICacheHe
 ## Other Structures
 Along with using `IRepository` for your data retrieval, you should practice using IService Interfaces and implementations if any data manipulation or retrieval requires technology specific calls.  For example, if you have a service that retrieves Page Banners for a given page, that should be abstracted out so it too can be easily swapped out.
 
-# Caching Renderings (Output Caching)
-The other type of data we wish to focus on is generally called “Output Caching.”  This is caching that is intended to reduce load times or rendering times once the data has been retrieved.  Here are the following caching scenarios, their pros and cons and how to implement.
-
-## Cache Entire Output ('Donut-Hole + Donut')
-In this model, the entire output is cached.  This is the default behavior of `[OutputCache]` attribute in MVC, in which the Logic and View rendering are all cached together.  
-
-The positive side of this is it’s very easy to implement, and for very static sites it’s often great to leverage.
-
-The downside though is that (unless you do ajax calls client side) none of the content within the rendering can be dynamic and vary per user without generating unique caches for each variation.  The entire result is cached, so if there is any variation, that’s another entirely cached result for that user.
-
-The other downside is cache dependencies become difficult, as in theory you would need to know not only the main content’s dependencies, but also any dependencies in the header and footer.  Say you add a Navigation Item, you *should* invalidate ALL Output Caches since the main Layout has changed for all of them.
-
-### Implementation
-1. Use the `[OutputCache()]` Attribute on your `ActionResult`.
-
-See [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedViewByID`
-
-## Partial View Caching ("Donut-Hole")
-In this model, the main `ActionResult` is not cached, but instead individual elements of the rendering are cached.  For example, your Layout view calls a Cached Partial View of the Navigation, and a Cached Partial View of the Footer.  
-
-The Positive side is then each section can have its own Cache Dependencies and can clear individual element’s caches if that cache needs clearing.
-
-The Downside is the Logic done in your `ActionResult` is not cached, so that can increase load times, and any element not cached of course will render fully each time.
-
-### Implementation
-1. Do not use the `[OutputCache]` attribute on your main `ActionResult`
-1. Add `[OutputCache]` Attributes on any Partial View on elements that you want to cache
-1. Call `@Html.RenderAction` or `@Html.RenderView` in your Layouts to call these cached elements.
-
-See [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`IndexByID` and the [ExampleSharedLayout.cshtml](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Views/ExampleCache/ExampleSharedLayout.cshtml) `@{Html.RenderAction("CachedPartialExample", "ExampleCache", new { Index = 1 }); }` of [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedPartialExample`
-
-## Action Result Caching ("Donut" ?)
-Action Result Caching is a combination of both worlds.  In this, the Logic of the main `ActionResult` is cached, but the rendering View is not.
-
-The Positive you can still cache individual elements on the page (such as the navigation) and have those on separate Cache Dependencies, and you are caching the logic to render the Model that is passed to the view in your main ActionResult.
-
-The Downside is if you want your Action Result’s View to be cached (the items not found in the Layout), then you may have to call separate Cached Partial Views and pass parts of your Model out, thus segmenting your View.  
-
-Let’s use the example of an ActionResult RenderBlog that gets a Blog Article with Related Blogs.  While the Retrieval of the Model of the Blog + Related Blogs is cached, the Repeater to display all those Related Blogs would not be cached unless you made a separate Partial View (ex `@Html.RenderAction(“RenderRelatedBlogs”, Model.RelatedBlogs)`) and cached that.
-
-### Implementation
-1. Use `[ActionResultCache]` on your main `ActionResult`
-1. Use `[OutputCache]` on Partial Views that you wish to cache.  
-1. Call `@Html.RenderAction` or `@Html.RenderView` in your Layouts to call these cached elements.
-
-[ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedActionByID` and [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedPartialExample`.
-
-## Output Cache Variables
-Of the `[OutputCache]` and `[ActionResultCache]`, there are a handful of properties that I wish to explain:
-
-### Duration
-Time in seconds the cache should be enacted
-
-### VaryByParam
-MVC Defaults to all parameters, but you can specify in a semi-colon separated list which parameters should be included in making the CacheKey.  `none` is the keyword to signify you wish to ignore the Parameters altogether. 
-
-### VaryByCustom
-This acts as a sort of keyword that you can add multiple, even dynamic values to your CacheKey.  How it works is when you add a value, the Application’s `GetVeryByCustomString(HttpContext context, string custom)` is called and returns the CacheKey to be added.  You can overwrite this method in your [Global.asax.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Global.asax.cs) to add different options. 
-
-Examples are provided of how to convert this custom string into the cache key, and how to make your own `VaryBy` extension methods.  Kentico provides some defaults (VaryByHost, VaryByBrowser, VaryByUser, VaryByPersona, VaryByCookieLevel, VaryByABTestVariant), but you [can create your own](https://github.com/KenticoDevTrev/MVCCaching/tree/master/MVCCaching.Kentico.Examples/Extensions).  In the end, all these do is concatenate all the Variations into a long string for the CacheKey (Ex `User=Trevor_Browser=Chrome`)
-
-### VaryByHeader
-You can specify Header Parameters that should be included in the Cache Key creation.  Can be useful if an API can return XML or JSON depending on the header’s content-type value, you would want to cache the XML and JSON separately.
-
-### VaryByCookie
-You can specify Cookie values that should be included in the Cache Key Creation.
-
-## Handling Dynamic Cache Dependency Keys
+# Handling Dynamic Cache Dependency Keys
 There are situations where your cache dependency keys are more complicated than what can be created through the `[CacheDependency()]` Attribute.  Since the automatic caching and Output Cache Dependencies are only aware of the `[CacheDependency()]` attributes and the method's return type, in these situations it cannot automatically Cache nor add Output Cache Dependencies.
 
 For both examples, we'll use this method as our starting point:
@@ -280,6 +212,77 @@ mAccordionRepository.GetRelatedAccordions(NodeGuid, NodeID, out Dependencies);
 mOutputCacheDependencies.AddCacheDependencies(Dependencies.ToArray());
 ```
 
+# Caching Renderings (Output Caching)
+The other type of data we wish to focus on is generally called “Output Caching.”  This is caching that is intended to reduce load times or rendering times once the data has been retrieved.  Here are the following caching scenarios, their pros and cons and how to implement.  First though, let's cover some definitions of the Output Caching:
+
+## Output Cache Variables
+Of the `[OutputCache]` and `[ActionResultCache]`, there are a handful of properties that I wish to explain:
+
+### Duration
+Time in seconds the cache should be enacted
+
+### VaryByParam
+MVC Defaults to all parameters, but you can specify in a semi-colon separated list which parameters should be included in making the CacheKey.  `none` is the keyword to signify you wish to ignore the Parameters altogether. 
+
+### VaryByCustom
+This acts as a sort of keyword that you can add multiple, even dynamic values to your CacheKey.  How it works is when you add a value, the Application’s `GetVeryByCustomString(HttpContext context, string custom)` is called and returns the CacheKey to be added.  You can overwrite this method in your [Global.asax.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Global.asax.cs) to add different options. 
+
+Examples are provided of how to convert this custom string into the cache key, and how to make your own `VaryBy` extension methods.  Kentico provides some defaults (VaryByHost, VaryByBrowser, VaryByUser, VaryByPersona, VaryByCookieLevel, VaryByABTestVariant), but you [can create your own](https://github.com/KenticoDevTrev/MVCCaching/tree/master/MVCCaching.Kentico.Examples/Extensions).  In the end, all these do is concatenate all the Variations into a long string for the CacheKey (Ex `User=Trevor_Browser=Chrome`)
+
+### VaryByHeader
+You can specify Header Parameters that should be included in the Cache Key creation.  Can be useful if an API can return XML or JSON depending on the header’s content-type value, you would want to cache the XML and JSON separately.
+
+### VaryByCookie
+You can specify Cookie values that should be included in the Cache Key Creation.
+
+## Output Cache Dependency Automation
+As a request is rendered, it gathers Output Cache Dependencies along the way.  As part of the MVCCaching tool, any `IRepository` typed methods that are called through their interface will automatically add the same Cache Dependencies to the Output Cache Dependencies.
+
+You can also manually add dependencies through the `IOutputCacheDependency` interface, which you can add to the constructor of your classes and leverage.
+
+## Cache Model: Cache Entire Output ('Donut-Hole + Donut')
+In this model, the entire output is cached.  This is the default behavior of `[OutputCache]` attribute in MVC, in which the Logic and View rendering are all cached together.  
+
+The positive side of this is it’s very easy to implement, and is the 'fastest' cache as the entire output is cached.  
+
+The downside though is that (unless you do ajax calls client side) none of the content within the rendering can be dynamic and vary per user without generating unique caches for each variation.  The entire result is cached, so if there is any variation, that’s another entirely cached result for that user.
+
+The other downside is you need to make sure that all the elements have their dependencies added to the output cache, as in theory you would need to know not only the main content's dependencies, but also any dependencies in the header and footer.  Say you add a Navigation Item, you *should* invalidate ALL Output Caches since the main Layout has changed for all of them.  It is important to ensure that you include all the possible cache dependencies for the rendering either through usage of automatic `IRepository` caching or manually through the `IOutputCacheDependency` interface.
+
+### Implementation
+1. Use the `[OutputCache()]` Attribute on your `ActionResult`.
+
+See [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedViewByID`
+
+## Cache Model: Partial View Caching ("Donut-Hole")
+In this model, the main `ActionResult` is not cached, but instead individual elements of the rendering are cached.  For example, your Layout view calls a Cached Partial View of the Navigation, and a Cached Partial View of the Footer.  
+
+The Positive side is then each section can have its own Cache Dependencies and can clear individual element’s caches if that cache needs clearing.
+
+The Downside is the Logic done in your `ActionResult` is not cached, so that can increase load times, and any element not cached of course will render fully each time.
+
+### Implementation
+1. Do not use the `[OutputCache]` attribute on your main `ActionResult`
+1. Add `[OutputCache]` Attributes on any Partial View on elements that you want to cache
+1. Call `@Html.RenderAction` or `@Html.RenderView` in your Layouts to call these cached elements.
+
+See [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`IndexByID` and the [ExampleSharedLayout.cshtml](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Views/ExampleCache/ExampleSharedLayout.cshtml) `@{Html.RenderAction("CachedPartialExample", "ExampleCache", new { Index = 1 }); }` of [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedPartialExample`
+
+## Cache Model: Action Result Caching ("Donut" ?)
+Action Result Caching is a combination of both worlds.  In this, the Logic of the main `ActionResult` is cached, but the rendering View is not.
+
+The Positive you can still cache individual elements on the page (such as the navigation) and have those on separate Cache Dependencies, and you are caching the logic to render the Model that is passed to the view in your main ActionResult.
+
+The Downside is if you want your Action Result’s View to be cached (the items not found in the Layout), then you may have to call separate Cached Partial Views and pass parts of your Model out, thus segmenting your View.  
+
+Let’s use the example of an ActionResult RenderBlog that gets a Blog Article with Related Blogs.  While the Retrieval of the Model of the Blog + Related Blogs is cached, the Repeater to display all those Related Blogs would not be cached unless you made a separate Partial View (ex `@Html.RenderAction(“RenderRelatedBlogs”, Model.RelatedBlogs)`) and cached that.
+
+### Implementation
+1. Use `[ActionResultCache]` on your main `ActionResult`
+1. Use `[OutputCache]` on Partial Views that you wish to cache.  
+1. Call `@Html.RenderAction` or `@Html.RenderView` in your Layouts to call these cached elements.
+
+[ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedActionByID` and [ExampleCacheController.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico.Examples/Controllers/Examples/ExampleCacheController).`CachedPartialExample`.
 
 ## Examples
 Please see the below files for examples:
