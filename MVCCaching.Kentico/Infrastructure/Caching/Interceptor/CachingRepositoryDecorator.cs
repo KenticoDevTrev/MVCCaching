@@ -185,13 +185,16 @@ namespace MVCCaching.Kentico
             {
                 return string.Empty;
             }
-
-            var keyArgument = argument as ICacheKey;
-            if (keyArgument != null)
+            if (argument is ICacheKey)
             {
-                return keyArgument.GetCacheKey();
+                return ((ICacheKey)argument).GetCacheKey();
             }
-
+            if(argument is IEnumerable<object>)
+            {
+                return string.Join("-", ((IEnumerable<object>)argument).Select(x => {
+                    return (x is ICacheKey ? ((ICacheKey)x).GetCacheKey() : x.ToString());
+                }));
+            }
             return argument.ToString();
         }
     }

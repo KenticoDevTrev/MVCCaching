@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>MVCCaching.Kentico</id>
-		<version>12.29.3.0</version>
+		<version>12.29.4.0</version>
 		<title>MVC Caching Framework - Kentico Files</title>
 		<authors>Heartland Business Systems</authors>
 		<owners></owners>
@@ -10,7 +10,7 @@
 		<iconUrl>https://raw.githubusercontent.com/Kentico/devnet.kentico.com/master/marketplace/assets/generic-integration.png</iconUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Kentico Code (Files only) for MVC Caching to be implemented.  Still requires Global.asax.cs modifications to fully implement (see Project Site's instructions).  These are just the base files, and not compiled since you may want to modify them.  Use caution if you do any updates on this package that any changes are not overwritten (default nuget behavior is no overwrite if modified).</description>
-		<releaseNotes>Downgraded Autofac and put back in DynamicProxy2 instead of DynamicProxy to prevent Castle.Core from reverting the bindings and erroring each time.</releaseNotes>
+		<releaseNotes>Updated GetArgumentCacheKey for CachingRepositoryDecorator to handle IEnuemrable parameters and concatenate the arguments within it.</releaseNotes>
 		<copyright>Copyright 2019 Heartland Business Systems</copyright>
 		<tags>MVC Caching Framework Kentico</tags>
 		<dependencies>
