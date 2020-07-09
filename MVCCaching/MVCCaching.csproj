@@ -535,6 +535,7 @@
   <ItemGroup>
     <Compile Include="Attributes\ActionResultCacheAttribute.cs" />
     <Compile Include="Attributes\CacheDependencyAttribute.cs" />
+    <Compile Include="Attributes\CacheDurationAttribute.cs" />
     <Compile Include="Attributes\CacheNameNoSiteAttribute.cs" />
     <Compile Include="Attributes\CacheNameNoCultureAttribute.cs" />
     <Compile Include="Attributes\DoNotCacheAttribute.cs" />

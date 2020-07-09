@@ -26,8 +26,9 @@ Repository Caching is mostly handled automatically, using AutoFac and intercepts
 
 **Automatic Caching will occur under these conditions:**
 1. The Method is public.
-2. It does NOT contains `[DoNotCache]`
-3. It either contains 1 or more `[CacheDependency()]` attributes, or returns `TreeNode`, `IEnumerable<TreeNode>`, `BaseInfo`, or `IEnumerable<BaseInfo>`
+2. It does NOT contains `[DoNotCache]` and/or it does NOT contains a `[CacheDuration(0)]`
+3. It either contains 1 or more `[CacheDependency()]` attributes, or returns `TreeNode`, `IEnumerable<TreeNode>`, `BaseInfo`, or `IEnumerable<BaseInfo>`, or has a `[CacheDuration(#)]` with a number greater than 0
+4. The method is called through the `IRepository` inherited Interface.
 
 
 Autofac is set up to look for any method that starts with Get and implements the `IRepository` interface ([CachingRepositoryDecorator.cs](https://github.com/KenticoDevTrev/MVCCaching/blob/master/MVCCaching.Kentico/Infrastructure/Caching/Interceptor/CachingRepositoryDecorator.cs)).  It then intercepts (`CachingRepositoryDecorator.Intercept`) these methods and then based on either the `CacheDependency` attributes, or the return type, it creates a Cache Dependency for the method and runs it through Kentico’s CacheHelper (`CachingRepositoryDecorator.GetCachedResult`).
@@ -52,6 +53,17 @@ Similar to the `CacheDependency`, except takes a Page Type and constructs the `n
 
 The `DoNotCache` Attribute will bypass the automatic caching that occurs through the IRepository logic found in `CachingRepositoryDecorator.cs`  This is useful if you wish to either not cache, or wish to implement your own caching (using ICacheHelper / Kentico's CacheHelper).
 
+### CacheDuration Attribute
+
+The `CacheDuration` Attribute will set the number of minutes an item will be cached.  If set to 0, caching will be disabled. If this is the only attribute (there is no [CacheDependency] nor it return the specified types), and the duration is set to a number greater than 0, then the method will cache with a dummy Dependency Key (random guid).  This means there will be no way to specifically clear this cache except if you clear the entire cache.
+
+### CacheNameNoCulture Attribute
+
+If you add a `[CacheNameNoCulture]` attribute then the Cache Key name will not contain the culture (which exists by default), which will mean that a user requesting this data from a different culture will share the same cache key and cache.   This should be added for methods calls that are site-agnostic.
+
+### CacheNameNoSite Attribute
+
+If you add a `[CacheNameNoSite]` attribute then the Cache Key name will not contain the site name (which exists by default), which means that a user requesting this data from a different site will share the same cache key and cache.  This should be added for methods calls that are culture-agnostic.
 
 ### Nuances
 * If you apply custom `CacheDependency` attributes, these will be used only instead of the automatic dependency generation.
