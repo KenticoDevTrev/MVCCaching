@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>MVCCaching.Base.Core</AssemblyName>
+    <RootNamespace>MVCCaching.Base.Core</RootNamespace>
+    <Version>2.0.0</Version>
+    <PackageId>MVCCaching.Core</PackageId>
+    <Description>Base Attributes and Interfaces for MVC Caching to be implemented with.  Designed for MVCCaching.Kentico.Core code files found on github.com, but could be extended to other uses.</Description>
+    <Copyright>2020 Heartland Business Systems</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$authors$</authors>
+		<owners>$author$</owners>
+		<projectUrl>https://github.com/KenticoDevTrev/MVCCaching</projectUrl>
+		<iconUrl>https://raw.githubusercontent.com/Kentico/devnet.kentico.com/master/marketplace/assets/generic-integration.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$description$</description>
+		<releaseNotes>MVC Caching Core interfaces (used by Kentico.MVCCaching.Core)</releaseNotes>
+		<copyright>Copyright 2020 Heartland Business Systems</copyright>
+		<tags>MVC Caching Framework</tags>
+		<dependencies>
+		</dependencies>
+	</metadata>
+</package>
