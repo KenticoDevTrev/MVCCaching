@@ -253,7 +253,7 @@ The Sitemap system is relatively simple, you use the `ISiteMapRepository` to get
 
     <modules runAllManagedModulesForAllRequests="true">
 
-[Robots.txt](https://github.com/HBSTech/Kentico13CoreBaseline/blob/master/MVC/MVC/wwwcontent/robots.txt)
+[Robots.txt](https://github.com/HBSTech/Kentico13CoreBaseline/blob/master/MVC/MVC/wwwroot/robots.txt)
 -----------------------------------------------------------------------------------------
 
 For the `Robots.txt` file, you can just create one, there is no need for really any MVC logic unless you, for some reason, want the `Robots.txt` to be dynamic.  Then you can follow a similar pattern to the Sitemap.
