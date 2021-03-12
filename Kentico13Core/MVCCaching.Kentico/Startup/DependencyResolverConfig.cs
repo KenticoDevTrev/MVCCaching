@@ -40,6 +40,8 @@ namespace MVCCaching.Kentico
             builder.RegisterType<CachingRepositoryContext>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<RepoContext>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<CachingRepositoryDecorator>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<CacheDependenciesStore>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
+
             foreach (Assembly AssemblyToConfigure in AssembliesToConfigure)
             {
                 // Register repositories that use IRepository, passing culture and LatestVersionEnabled

@@ -10,6 +10,7 @@ using CMS.Helpers;
 using CMS.SiteProvider;
 using Castle.DynamicProxy;
 using MVCCaching.Interceptor;
+using MVCCaching.Base.Core.Interfaces;
 
 namespace MVCCaching.Kentico
 {
@@ -23,7 +24,8 @@ namespace MVCCaching.Kentico
         
         private readonly ICachingRepositoryContext cachingRepoContext;
         private readonly IContentItemMetadataProvider mContentItemMetadataProvider;
-        
+        private readonly ICacheDependenciesStore cacheDependenciesStore;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CachingRepositoryDecorator"/> class.
@@ -31,10 +33,11 @@ namespace MVCCaching.Kentico
         /// <param name="cachingRepoContext">Time duration during which the repository method result is cached.</param>
         /// <param name="contentItemMetadataProvider">Object that provides information about pages and info objects using their runtime type.</param>
         /// <param name="cacheEnabled">Indicates whether caching is enabled.</param>
-        public CachingRepositoryDecorator(ICachingRepositoryContext cachingRepoContext, IContentItemMetadataProvider contentItemMetadataProvider)
+        public CachingRepositoryDecorator(ICachingRepositoryContext cachingRepoContext, IContentItemMetadataProvider contentItemMetadataProvider, ICacheDependenciesStore cacheDependenciesStore)
         {
             this.cachingRepoContext = cachingRepoContext;
             mContentItemMetadataProvider = contentItemMetadataProvider;
+            this.cacheDependenciesStore = cacheDependenciesStore;
         }
 
 
@@ -115,6 +118,10 @@ namespace MVCCaching.Kentico
                 invocation.Proceed();
                 return invocation.ReturnValue;
             };
+
+            // Add Cache Dependencies to ICacheDependencyStore
+            cacheDependenciesStore.Store(dependencyCacheKey.Split(TextHelper.NewLine));
+
             return CacheHelper.Cache(provideData, cacheSettings);
         }
 

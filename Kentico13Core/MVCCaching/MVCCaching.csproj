@@ -1,17 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>MVCCaching.Base.Core</AssemblyName>
     <RootNamespace>MVCCaching.Base.Core</RootNamespace>
-    <Version>2.0.0</Version>
-    <PackageId>MVCCaching.Core</PackageId>
+    <Version>2.1.1</Version>
+    <PackageId>MVCCaching.Base.Core</PackageId>
     <Description>Base Attributes and Interfaces for MVC Caching to be implemented with.  Designed for MVCCaching.Kentico.Core code files found on github.com, but could be extended to other uses.</Description>
     <Copyright>2020 Heartland Business Systems</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Adjusted Cache Dependency Store to return array instead of IEnumerable for easier integration with Kentico's Cache Dependency tag.</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
 
 </Project>

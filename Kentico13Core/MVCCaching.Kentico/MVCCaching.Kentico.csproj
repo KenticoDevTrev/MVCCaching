@@ -5,16 +5,18 @@
     <AssemblyName>MVCCaching.Kentico.Core</AssemblyName>
     <RootNamespace>MVCCaching</RootNamespace>
     <PackageIcon>icon-48x48.png</PackageIcon>
-    <Version>13.0.0</Version>
+    <Version>13.0.2</Version>
     <Authors>Trevor Fayas</Authors>
     <Company>Heartland Business Systems</Company>
     <Product>MVC Caching</Product>
-    <Description>MVC Caching for Kentico Xperience 13 MVC.Net Core, provides attribute level caching and dependency injecting for IRepository and IService</Description>
+    <Description>MVC Caching for Kentico Xperience 13 MVC.Net Core, provides attribute level caching and dependency injecting for IRepository and IService.  Also provides ICacheDependenciesScope to track Dependencies and retrieve them and ICacheDependenciesStore to store them (all MVCCaching attributed dependencies automatically added to ICacheDependenciesStore).  While these can be used manually with any Kentico Xperience 13 version, it is primarily created for KX 13 Refresh 1 and above (Hotfix 16+)</Description>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
     <PackageTags>MVC Caching</PackageTags>
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageReleaseNotes>Added ICacheDependenciesStore and ICacheDependenciesScope integration.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/KenticoDevTrev/MVCCaching</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>13.0.2.0</AssemblyVersion>
+    <FileVersion>13.0.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +24,7 @@
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
     <PackageReference Include="Castle.Core" Version="4.4.1" />
     <PackageReference Include="Kentico.Xperience.AspNetCore.WebApp" Version="13.0.0" />
-    <PackageReference Include="MVCCaching.Base.Core" Version="2.0.0" />
+    <PackageReference Include="MVCCaching.Base.Core" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
