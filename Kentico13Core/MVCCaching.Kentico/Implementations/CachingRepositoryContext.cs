@@ -23,11 +23,16 @@ namespace MVCCaching.Implementations
 
         public bool CacheEnabled()
         {
-            return !HttpContextAccessor.HttpContext.Kentico().Preview().Enabled;
+            return !HttpContextAccessor?.HttpContext?.Kentico()?.Preview()?.Enabled ?? true;
         }
 
         public TimeSpan DefaultCacheItemDuration()
         {
+            if(Configuration == null)
+            {
+                return TimeSpan.Zero;
+            }
+
             var value = Configuration["RepositoryCacheItemDuration"];
 
             if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int seconds) && seconds > 0)

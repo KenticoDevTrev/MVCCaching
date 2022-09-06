@@ -4,19 +4,19 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>MVCCaching.Kentico.Core</AssemblyName>
     <RootNamespace>MVCCaching</RootNamespace>
-    <PackageIcon>icon-48x48.png</PackageIcon>
-    <Version>13.0.2</Version>
+    <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
+    <Version>13.0.3</Version>
     <Authors>Trevor Fayas</Authors>
     <Company>Heartland Business Systems</Company>
     <Product>MVC Caching</Product>
     <Description>MVC Caching for Kentico Xperience 13 MVC.Net Core, provides attribute level caching and dependency injecting for IRepository and IService.  Also provides ICacheDependenciesScope to track Dependencies and retrieve them and ICacheDependenciesStore to store them (all MVCCaching attributed dependencies automatically added to ICacheDependenciesStore).  While these can be used manually with any Kentico Xperience 13 version, it is primarily created for KX 13 Refresh 1 and above (Hotfix 16+)</Description>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
     <PackageTags>MVC Caching</PackageTags>
-    <PackageReleaseNotes>Added ICacheDependenciesStore and ICacheDependenciesScope integration.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed null reference for kentico context if implementation called early on in pipeline</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/KenticoDevTrev/MVCCaching</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>13.0.2.0</AssemblyVersion>
-    <FileVersion>13.0.2.0</FileVersion>
+    <AssemblyVersion>13.0.3.0</AssemblyVersion>
+    <FileVersion>13.0.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,9 +30,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="C:\Users\tfayas\Desktop\icon-48x48.png">
+    <None Include="..\..\..\hbs-favicon-96x96.png">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 </Project>

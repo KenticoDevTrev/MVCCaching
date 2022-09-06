@@ -25,7 +25,7 @@ namespace MVCCaching.Implementations
 
         public bool PreviewEnabled()
         {
-            return HttpContextAccessor.HttpContext.Kentico().Preview().Enabled;
+            return HttpContextAccessor?.HttpContext?.Kentico()?.Preview()?.Enabled ?? false;
         }
     }
 }
