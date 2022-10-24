@@ -12,7 +12,9 @@
     <Copyright>2022 Heartland Business Systems</Copyright>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-    <PackageReleaseNotes>Obsoleted IRepository and IService, added ICacheDependencyKeyBuilderFactory and ICacheDependencyKeyBuilder types.</PackageReleaseNotes>
+    <PackageReleaseNotes>Removed IRepository and IService, CacheDependency Attributes added ICacheDependencyKeyBuilderFactory and ICacheDependencyKeyBuilder types.</PackageReleaseNotes>
+    <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

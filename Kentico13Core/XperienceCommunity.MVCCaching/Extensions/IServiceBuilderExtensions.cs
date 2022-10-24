@@ -19,6 +19,7 @@ namespace MVCCaching
                 .AddScoped<ICacheDependenciesStore>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependencyKeysBuilderFactory, CacheDependencyKeysBuilderFactory>()
+                .AddScoped<ICacheRepositoryContext, CacheRepositoryContext>()
                 .AddSingleton<IContentItemMetadataProvider, ContentItemMetadataProvider>();
         }
 
