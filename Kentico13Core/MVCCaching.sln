@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30523.141
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCCaching", "MVCCaching\MVCCaching.csproj", "{264A3577-3967-4F45-9FCB-B2C2A4603118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVCCaching", "MVCCaching\MVCCaching.csproj", "{264A3577-3967-4F45-9FCB-B2C2A4603118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCCaching.Kentico", "MVCCaching.Kentico\MVCCaching.Kentico.csproj", "{477BC906-7B51-4581-B307-E6AD06C098DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVCCaching.Kentico", "MVCCaching.Kentico\MVCCaching.Kentico.csproj", "{477BC906-7B51-4581-B307-E6AD06C098DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
