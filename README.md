@@ -4,6 +4,9 @@ This package contains interfaces and extensions to build, store, and use Cache D
 
 This version is only compatible Kentico Xperience 13 with .Net Core (3.1+) applications.  If you are running KX12 MVC or KX13 on MVC 5 (.Net 4.8 Framework), please see the [.Net 4.8 branch](https://github.com/KenticoDevTrev/MVCCaching/tree/MVCCaching_For_Net48) and packages.
 
+# Migration
+If migrating from KX12 MVCCaching.Kentico, or KX13 MVCCaching.Kentico / MVCCaching.Kentico.Core, please see the [Migration Readme](Migration.md)
+
 # Installation
 
 1. Install the Nuget Package `XperienceCommunity.MVCCaching` on your MVC.Net Core application.  
