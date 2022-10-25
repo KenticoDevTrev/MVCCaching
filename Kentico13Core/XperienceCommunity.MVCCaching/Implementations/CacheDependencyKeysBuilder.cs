@@ -7,21 +7,21 @@ using System.Linq;
 namespace XperienceCommunity.MVCCaching.Implementations
 {
     /// <summary>
-    /// Base implementation of the ICacheDependencyKeysBuilder.  Most methods are defined in the ICacheDependencyKeysBuilderExtensions.cs
+    /// Base implementation of the ICacheDependencyBuilder.  Most methods are defined in the ICacheDependencyBuilderExtensions.cs
     /// </summary>
-    public class CacheDependencyKeysBuilder : ICacheDependencyKeysBuilder
+    public class CacheDependencyBuilder : ICacheDependencyBuilder
     {
         private readonly HashSet<string> _cacheKeys = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
         private readonly ICacheDependenciesStore _cacheDependenciesStore;
         private readonly ISiteService _siteService;
         private bool AddToDependencyStore { get; set; }
 
-        public CacheDependencyKeysBuilder(ISiteService siteService)
+        public CacheDependencyBuilder(ISiteService siteService)
         {
             _siteService = siteService;
             AddToDependencyStore = false;
         }
-        public CacheDependencyKeysBuilder(ISiteService siteService, ICacheDependenciesStore cacheDependenciesStore)
+        public CacheDependencyBuilder(ISiteService siteService, ICacheDependenciesStore cacheDependenciesStore)
         {
             _siteService = siteService;
             _cacheDependenciesStore = cacheDependenciesStore;
@@ -51,18 +51,18 @@ namespace XperienceCommunity.MVCCaching.Implementations
             }
         }
 
-        public ICacheDependencyKeysBuilder CustomKey(string key)
+        public ICacheDependencyBuilder AddKey(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
                 return this;
             }
 
-            CustomKey(key);
+            Add(key);
 
             return this;
         }
-        public ICacheDependencyKeysBuilder CustomKeys(IEnumerable<string> keys)
+        public ICacheDependencyBuilder AddKeys(IEnumerable<string> keys)
         {
             UnionWith(keys);
 

@@ -18,7 +18,7 @@ namespace MVCCaching
                 .AddScoped<CacheDependenciesStoreAndScope>()
                 .AddScoped<ICacheDependenciesStore>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
-                .AddScoped<ICacheDependencyKeysBuilderFactory, CacheDependencyKeysBuilderFactory>()
+                .AddScoped<ICacheDependencyBuilderFactory, CacheDependencyBuilderFactory>()
                 .AddScoped<ICacheRepositoryContext, CacheRepositoryContext>()
                 .AddSingleton<IContentItemMetadataProvider, ContentItemMetadataProvider>();
         }
@@ -28,17 +28,23 @@ namespace MVCCaching
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddMVCCachingAutoDependencyInjection(this IServiceCollection services)
+        public static IServiceCollection AddMVCCachingAutoDependencyInjectionByAttribute(this IServiceCollection services)
         {
-            return InternalAddMVCCachingAutoDependencyInjection(services, AssemblyDiscoveryHelper.GetAssemblies(true));
+            return InternalAddMVCCachingAutoDependencyInjectionByAttribute(services, AssemblyDiscoveryHelper.GetAssemblies(true));
         }
 
         /// <summary>
         /// Register Dependency Injection on any classes with the [AutoDependencyInjection] attribute for assemblies passed
         /// </summary>
-        public static IServiceCollection AddMVCCachingAutoDependencyInjection(this IServiceCollection services, IEnumerable<Assembly> assemblies) => InternalAddMVCCachingAutoDependencyInjection(services, assemblies);
+        public static IServiceCollection AddMVCCachingAutoDependencyInjectionByAttribute(this IServiceCollection services, IEnumerable<Assembly> assemblies) => InternalAddMVCCachingAutoDependencyInjectionByAttribute(services, assemblies);
 
-        private static IServiceCollection InternalAddMVCCachingAutoDependencyInjection(IServiceCollection services, IEnumerable<Assembly> assemblies)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="assemblies"></param>
+        /// <returns></returns>
+        private static IServiceCollection InternalAddMVCCachingAutoDependencyInjectionByAttribute(IServiceCollection services, IEnumerable<Assembly> assemblies)
         {
             foreach (Type type in assemblies.SelectMany(a => a.GetTypes()))
             {
@@ -48,14 +54,15 @@ namespace MVCCaching
                     var attr = (AutoDependencyInjectionAttribute)attributes[0];
                     Type implementedType = attr.InterfaceType;
                     // Grab any interface it implements that isn't ICacheKey
-                    if(implementedType == null)
+                    if (implementedType == null)
                     {
-                        implementedType = type.GetInterfaces().Where(x => !x.Equals(typeof(ICacheKey))).FirstOrDefault();
+                        implementedType = type.GetInterfaces().Where(x => !x.Equals(typeof(ICacheKey)))
+                                .FirstOrDefault();
                     }
 
-                    if(implementedType != null)
+                    if (implementedType != null)
                     {
-                        switch(attr.Lifetime)
+                        switch (attr.Lifetime)
                         {
                             default:
                             case DependencyInjectionLifetime.Singleton:
@@ -69,6 +76,39 @@ namespace MVCCaching
                                 break;
                         }
                     }
+                }
+            }
+            return services;
+        }
+
+        /// <summary>
+        /// Register Dependency Injection on any classes with the given suffixes.  Example "Repository" would set up DI for any class ending in Repository, like TabRepository
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddMVCCachingAutoDependencyInjectionSuffixes(this IServiceCollection services, IEnumerable<string> suffixes)
+        {
+            return InternalAddMVCCachingAutoDependencyInjectionBySuffixes(services, suffixes, AssemblyDiscoveryHelper.GetAssemblies(true));
+        }
+
+        /// <summary>
+        /// Register Dependency Injection on any classes with the [AutoDependencyInjection] attribute for assemblies passed
+        /// </summary>
+        public static IServiceCollection AddMVCCachingAutoDependencyInjectionBySuffixes(this IServiceCollection services, IEnumerable<string> suffixes, IEnumerable<Assembly> assemblies) => InternalAddMVCCachingAutoDependencyInjectionBySuffixes(services, suffixes, assemblies);
+
+
+        private static IServiceCollection InternalAddMVCCachingAutoDependencyInjectionBySuffixes(IServiceCollection services, IEnumerable<string> suffixes, IEnumerable<Assembly> assemblies)
+        {
+            foreach (Type type in assemblies.SelectMany(a => a.GetTypes()
+                .Where(t => (t.IsClass || t.IsAbstract) && suffixes.Any(s => t.Name.EndsWith(s, StringComparison.OrdinalIgnoreCase)))
+            ))
+            {
+                // logic borrowed from https://github.com/khellang/Scrutor/blob/b28d6ddf89c0b748cbc00c2a0b44dc4118e9cfa8/src/Scrutor/ReflectionExtensions.cs
+                Type implementedType = type.GetInterfaces().Where(x => !x.Equals(typeof(ICacheKey)))
+                    .FirstOrDefault();
+                if (implementedType != null)
+                {
+                    services.AddScoped(implementedType, type);
                 }
             }
             return services;

@@ -2,13 +2,13 @@
 
 namespace MVCCaching.Base.Core.Interfaces
 {
-    public interface ICacheDependencyKeysBuilderFactory
+    public interface ICacheDependencyBuilderFactory
     {
         /// <summary>
-        /// Gets a new instance of the ICacheDependencyKeysBuilder.
+        /// Gets a new instance of the ICacheDependencyBuilder.
         /// </summary>
         /// <param name="addKeysToStore">True by default, adds any keys to the ICacheStore, if false then will not (sometimes you want to use the builder just to build dependencies that should not be added to the store)</param>
         /// <returns></returns>
-        Task<ICacheDependencyKeysBuilder> CreateCacheDependencyKeysBuilder(bool addKeysToStore = true);
+        ICacheDependencyBuilder Create(bool addKeysToStore = true);
     }
 }

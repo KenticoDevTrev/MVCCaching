@@ -1,14 +1,12 @@
 ﻿using CMS.DocumentEngine;
-using Kentico.Content.Web.Mvc;
 using MVCCaching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using XperienceCommunity.MVCCaching.Implementations;
 
-namespace XperienceCommunity.MVCCaching.Extensions
+namespace Kentico.Content.Web.Mvc
 {
-    internal static class IPageCacheBuilderExtensions
+    public static class IPageCacheBuilderExtensions
     {
         /// <summary>
         /// Helper to simplify the configuration process.
@@ -19,7 +17,7 @@ namespace XperienceCommunity.MVCCaching.Extensions
         /// <param name="expirationMinutes">The Time for it to expire</param>
         /// <param name="keys">All keys, can accept IEnumerable, ICacheKey, and standard objects (which will return the .ToString(), which if you need a custom key for it then implement ICacheKey on the object class)</param>
         /// <returns></returns>
-        public static IPageCacheBuilder<TPageType> Configure<TPageType>(this IPageCacheBuilder<TPageType> cs, CacheDependencyKeysBuilder builder, double expirationMinutes, params object[] keys) where TPageType : TreeNode, new()
+        public static IPageCacheBuilder<TPageType> Configure<TPageType>(this IPageCacheBuilder<TPageType> cs, ICacheDependencyBuilder builder, double expirationMinutes, params object[] keys) where TPageType : TreeNode, new()
         {
             string keyName = (keys != null && keys.Length > 0 ? string.Join("|", keys.Cast<object>().Select(x => x.ToCacheNameIdentifier())) : Guid.NewGuid().ToString());
             return cs.Key(keyName)
@@ -38,14 +36,14 @@ namespace XperienceCommunity.MVCCaching.Extensions
         /// <param name="expirationMinutes">The Time for it to expire</param>
         /// <param name="keys">All keys, can accept IEnumerable, ICacheKey, and standard objects (which will return the .ToString(), which if you need a custom key for it then implement ICacheKey on the object class)</param>
         /// <returns></returns>
-        public static IPageCacheBuilder<TPageType> ConfigureWithDocumentIDCaching<TPageType>(this IPageCacheBuilder<TPageType> cs, CacheDependencyKeysBuilder builder, double expirationMinutes, params object[] keys) where TPageType : TreeNode, new()
+        public static IPageCacheBuilder<TPageType> ConfigureWithDocumentIDCaching<TPageType>(this IPageCacheBuilder<TPageType> cs, ICacheDependencyBuilder builder, double expirationMinutes, params object[] keys) where TPageType : TreeNode, new()
         {
             string keyName = (keys != null && keys.Length > 0 ? string.Join("|", keys.Cast<object>().Select(x => x.ToCacheNameIdentifier())) : Guid.NewGuid().ToString());
             return cs.Key(keyName)
         .Dependencies((items, csbuilder) => {
             foreach (var docID in items.Select(x => x.DocumentID))
             {
-                builder.CustomKey($"documentid|{docID}");
+                builder.AddKey($"documentid|{docID}");
             }
             builder.ApplyDependenciesTo(key => csbuilder.Custom(key));
         })
@@ -62,7 +60,7 @@ namespace XperienceCommunity.MVCCaching.Extensions
         /// <param name="expirationMinutes">The Time for it to expire</param>
         /// <param name="keys">All keys, can accept IEnumerable, ICacheKey, and standard objects (which will return the .ToString(), which if you need a custom key for it then implement ICacheKey on the object class)</param>
         /// <returns></returns>
-        public static IPageCacheBuilder<TPageType> Configure<TPageType>(this IPageCacheBuilder<TPageType> cs, CacheDependencyKeysBuilder builder, Action<IEnumerable<TPageType>, IPageCacheDependencyBuilder<TPageType>> action, double expirationMinutes, params object[] keys) where TPageType : TreeNode, new()
+        public static IPageCacheBuilder<TPageType> Configure<TPageType>(this IPageCacheBuilder<TPageType> cs, ICacheDependencyBuilder builder, Action<IEnumerable<TPageType>, IPageCacheDependencyBuilder<TPageType>> action, double expirationMinutes, params object[] keys) where TPageType : TreeNode, new()
         {
             string keyName = (keys != null && keys.Length > 0 ? string.Join("|", keys.Cast<object>().Select(x => x.ToCacheNameIdentifier())) : Guid.NewGuid().ToString());
             return cs.Key(keyName)

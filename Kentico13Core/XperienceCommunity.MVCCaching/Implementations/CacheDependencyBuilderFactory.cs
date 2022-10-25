@@ -5,25 +5,25 @@ using System.Threading.Tasks;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {
-    public class CacheDependencyKeysBuilderFactory : ICacheDependencyKeysBuilderFactory
+    public class CacheDependencyBuilderFactory : ICacheDependencyBuilderFactory
     {
         private readonly ICacheDependenciesStore _cacheDependenciesStore;
         private readonly ISiteService _siteService;
 
-        public CacheDependencyKeysBuilderFactory(ICacheDependenciesStore cacheDependenciesStore,
+        public CacheDependencyBuilderFactory(ICacheDependenciesStore cacheDependenciesStore,
             ISiteService siteService)
         {
             _cacheDependenciesStore = cacheDependenciesStore;
             _siteService = siteService;
         }
 
-        public Task<ICacheDependencyKeysBuilder> CreateCacheDependencyKeysBuilder(bool addKeysToStore = true)
+        public ICacheDependencyBuilder Create(bool addKeysToStore = true)
         {
             if(addKeysToStore) { 
-                return Task.FromResult((ICacheDependencyKeysBuilder)new CacheDependencyKeysBuilder(_siteService, _cacheDependenciesStore));
+                return (ICacheDependencyBuilder)new CacheDependencyBuilder(_siteService, _cacheDependenciesStore);
             } else
             {
-                return Task.FromResult((ICacheDependencyKeysBuilder)new CacheDependencyKeysBuilder(_siteService));
+                return (ICacheDependencyBuilder)new CacheDependencyBuilder(_siteService);
             }
         }
     }
