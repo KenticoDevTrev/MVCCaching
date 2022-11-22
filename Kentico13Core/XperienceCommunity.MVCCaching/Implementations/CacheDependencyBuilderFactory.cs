@@ -1,7 +1,6 @@
 ﻿using CMS.Base;
 using MVCCaching;
 using MVCCaching.Base.Core.Interfaces;
-using System.Threading.Tasks;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {
@@ -20,10 +19,22 @@ namespace XperienceCommunity.MVCCaching.Implementations
         public ICacheDependencyBuilder Create(bool addKeysToStore = true)
         {
             if(addKeysToStore) { 
-                return (ICacheDependencyBuilder)new CacheDependencyBuilder(_siteService, _cacheDependenciesStore);
+                return new CacheDependencyBuilder(_siteService.CurrentSite?.SiteName ?? "unknownsite", _cacheDependenciesStore);
             } else
             {
-                return (ICacheDependencyBuilder)new CacheDependencyBuilder(_siteService);
+                return new CacheDependencyBuilder(_siteService.CurrentSite?.SiteName ?? "unknownsite");
+            }
+        }
+
+        public ICacheDependencyBuilder Create(string specificSiteName, bool addKeysToStore = true)
+        {
+            if (addKeysToStore)
+            {
+                return new CacheDependencyBuilder(specificSiteName, _cacheDependenciesStore);
+            }
+            else
+            {
+                return new CacheDependencyBuilder(specificSiteName);
             }
         }
     }

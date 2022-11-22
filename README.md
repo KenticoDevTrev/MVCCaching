@@ -1,5 +1,6 @@
 
 
+
 # XperienceCommunity.MVCCaching
 This package contains interfaces and extensions to build, store, and use Cache Dependencies, as well as an Attribute to automatically set up Dependency Injection on your custom interfaces/implementations.
 
@@ -145,6 +146,47 @@ You can easily create your own extension methods to suit your purposes for your 
 
 If needed as well, you implement your own Factory and Builder object to add even further functionality, however in most cases this is not warranted.
 
+## Querying Pages on other Sites
+The `ICacheDependencyBuilderFactory` by default uses the current request's site for it's context.  If you are querying pages from another site, or with a differnet culture than the current culture, then you cannot leverage the default `IPageRetriever` as well as the dependency keys will need to be different.
+
+You can use the `ICacheDependencyBuidlerFactory.Create("MySiteCodeName")` method to overwrite the SiteCodeName that will be used in the cache key building.
+
+Then you should use the normal `DocumentQuery`, `DocumentQuery<TType>` or `MultiDocumentQuery` to retrieve pages.  Unlike the `IPageRetriever` which automatically handles Culture, Site, and PreviewMode, these base queries do not do so.  You can leverage the `query.WithCulturePreviewModeContext(_cacheRepositoryContext)` to add in Culture and Preview Mode, then the `query.Site("MySiteCodeName")` to select your specific site, and in the cache key name use `_cacheRepositoryContext.ToCacheRepositoryContextNameIdentifier()` to add the culture and preview mode to the cache key name, along with your site name.
+
+Here's an example:
+
+``` csharp
+private ICacheDependencyBuilderFactory _cacheDependencyBuilderFactory;
+private ICacheRepositoryContext _cacheRepositoryContext;
+private IProgressiveCache _progressiveCache;
+
+public MyClass(ICacheDependencyBuilderFactory cacheDependencyBuilderFactory,
+		ICacheRepositoryContext cacheRepositoryContext,
+		IProgressiveCache progressiveCache) {
+	_cacheDependencyBuilderFactory = cacheDependencyBuilderFactory;
+	_cacheRepositoryContext = cacheRepositoryContext;
+	_progressiveCache = progressiveCache;
+}
+
+public Task<IEnumerable<TreeNode>> GetPagesOnDifferentSiteAsync() {
+	var siteName = "SomeOtherSiteCodeName";
+
+	// Create builder with specified site
+	var builder = _cacheDependencyBuilderFactory.Create(siteName)
+		.PagePath("/Some/Path", PathTypeEnum.Children);
+		
+	var data = _progressiveCache.LoadAsync(async cs => 
+		var query = await new DocumentQuery()
+			.Site(siteName)
+			.WithCulturePreviewModeContext(_cacheRepositoryContext)
+			.Path("/Some/Path/%")
+			.GetEnumerableTypedResultAsync();
+		return query;
+		}, new CacheSettings(60, "GetPagesOnDifferentSite", siteName, _cacheRepositoryContext.ToCacheRepositoryContextNameIdentifier()));
+		
+		return data;
+}
+```
 
 # Other Tools
 ## Cache Durations

@@ -13,24 +13,24 @@ namespace XperienceCommunity.MVCCaching.Implementations
     {
         private readonly HashSet<string> _cacheKeys = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
         private readonly ICacheDependenciesStore _cacheDependenciesStore;
-        private readonly ISiteService _siteService;
+        private string SiteCodeName { get; set; }
         private bool AddToDependencyStore { get; set; }
 
-        public CacheDependencyBuilder(ISiteService siteService)
+        public CacheDependencyBuilder(string specificSiteCodeName)
         {
-            _siteService = siteService;
+            SiteCodeName = specificSiteCodeName;
             AddToDependencyStore = false;
         }
-        public CacheDependencyBuilder(ISiteService siteService, ICacheDependenciesStore cacheDependenciesStore)
+        public CacheDependencyBuilder(string specificSiteCodeName, ICacheDependenciesStore cacheDependenciesStore)
         {
-            _siteService = siteService;
+            SiteCodeName = specificSiteCodeName;
             _cacheDependenciesStore = cacheDependenciesStore;
             AddToDependencyStore = true;
         }
 
         public string SiteName()
         {
-            return _siteService?.CurrentSite?.SiteName ?? "unknownsite";
+            return SiteCodeName ?? "unknownsite";
         }
 
         public ISet<string> GetKeys() => _cacheKeys;
