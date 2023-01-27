@@ -20,8 +20,8 @@ public void ConfigureServices(IServiceCollection services)
         {
         services.AddMVCCaching();
         // optional Automatic DI setup, see documentation
-	    // services.AddMVCCachingAutoDependencyInjectionByAttribute();
-	    // services.AddMVCCachingAutoDependencyInjectionBySuffixes(new string[] {"Repository", "Service"});
+	    // services.AddMVCCachingAutoDependencyInjectionByAttribute(); // This looks for any class with [AutoDependencyInjection] and injects it for any interface it implements
+	    // services.AddMVCCachingAutoDependencyInjectionBySuffixes(new string[] {"Repository", "Service"}); // This looks at any class with these suffixes and injects it for any interface it implements
 	    ...
         }
 ```
