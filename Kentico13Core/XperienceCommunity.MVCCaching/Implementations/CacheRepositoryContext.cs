@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MVCCaching;
 using System;
+using CMS.DataEngine;
+using CMS.SiteProvider;
+using Kentico.PageBuilder.Web.Mvc;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {
@@ -29,6 +32,21 @@ namespace XperienceCommunity.MVCCaching.Implementations
             } catch(Exception)
             {
                 return System.Globalization.CultureInfo.CurrentCulture.Name;
+            }
+        }
+
+        public int CacheTimeInMinutes()
+        {
+            try
+            {
+                var cacheTimeInMinutes =
+                    SettingsKeyInfoProvider.GetIntValue($"{SiteContext.CurrentSiteName}.CMSCacheMinutes");
+
+                return cacheTimeInMinutes;
+            }
+            catch (Exception)
+            {
+                return 0;
             }
         }
 
