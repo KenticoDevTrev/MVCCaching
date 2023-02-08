@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Caching.Memory;
-using MVCCaching;
 using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace XperienceCommunity.MVCCaching.TagHelpers
+namespace MVCCaching
 {
     [HtmlTargetElement("cache-scope")]
     public class CacheScopeTagHelper : CacheTagHelper
