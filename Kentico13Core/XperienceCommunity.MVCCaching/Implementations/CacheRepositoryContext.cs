@@ -1,13 +1,11 @@
-﻿using CMS.Localization;
+﻿using CMS.DataEngine;
+using CMS.SiteProvider;
 using Kentico.Content.Web.Mvc;
 using Kentico.Web.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MVCCaching;
 using System;
-using CMS.DataEngine;
-using CMS.SiteProvider;
-using Kentico.PageBuilder.Web.Mvc;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {

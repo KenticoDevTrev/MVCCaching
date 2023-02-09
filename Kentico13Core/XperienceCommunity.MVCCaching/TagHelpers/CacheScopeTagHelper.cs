@@ -1,4 +1,6 @@
-﻿using CMS.Helpers.Caching;
+﻿using CMS.DataEngine;
+using CMS.Helpers.Caching;
+using CMS.SiteProvider;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Caching.Memory;
@@ -8,54 +10,61 @@ using System.Threading.Tasks;
 
 namespace MVCCaching
 {
-    [HtmlTargetElement("cache-scope")]
+
+    [HtmlTargetElement("cache", Attributes = TARGET_ATTRIBUTE)]
     public class CacheScopeTagHelper : CacheTagHelper
     {
-        private readonly IMemoryCache mMemoryCache;
+        public const string TARGET_ATTRIBUTE = "scoped";
+        public const string KEYS_ATTRIBUTE = "additional-keys";
+
         private readonly ICacheDependencyAdapter mCacheDependencyAdapter;
         private readonly ICacheDependenciesScope mCacheDependenciesScope;
         private readonly ICacheDependenciesStore mCacheDependenciesStore;
         private readonly ICacheRepositoryContext mCacheRepositoryContext;
+        private readonly IMemoryCache mMemoryCache;
 
+        public override int Order => 2;
 
-        [HtmlAttributeName("additional-keys")]
-        public string[] AdditionalKeys { get; set; }
+        [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; }
 
-        /// <inheritdoc />
+        /// <override />
         public override void Init(TagHelperContext context)
         {
             base.Init(context);
 
             mCacheDependenciesScope.Begin();
 
-            Enabled = mCacheRepositoryContext.CacheEnabled();
+            if (!context.AllAttributes.ContainsName(nameof(Enabled)))
+                Enabled = mCacheRepositoryContext.CacheEnabled();
 
-            //sets cache time if not set by tag attribute to the Xperienece setting for system cache time in minutes
-            var cacheTimeInMinutes = mCacheRepositoryContext.CacheTimeInMinutes();
-            if (!ExpiresAfter.HasValue && cacheTimeInMinutes > 0)
-                ExpiresAfter = TimeSpan.FromMinutes(cacheTimeInMinutes);
+            if (!ExpiresAfter.HasValue)
+            {
+                var cacheTimeInMinutes =
+                    mCacheRepositoryContext.CacheTimeInMinutes();
+
+                if (cacheTimeInMinutes > 0)
+                    ExpiresAfter = TimeSpan.FromMinutes(cacheTimeInMinutes); 
+            }
         }
 
-        /// <inheritdoc />
-        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
+        public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            await base.ProcessAsync(context, output);
-
             if (AdditionalKeys is not null)
                 mCacheDependenciesStore.Store(AdditionalKeys);
 
             var cacheKeys = mCacheDependenciesScope.End();
 
             if (!Enabled || cacheKeys is { Length: 0 })
-                return;
+                return Task.CompletedTask;
 
             var changeToken = mCacheDependencyAdapter.GetChangeToken(cacheKeys);
 
             var key = $"{Guid.NewGuid()}";
             mMemoryCache.Set(key, (object)null, changeToken);
             mMemoryCache.Remove(key);
-        }
 
+            return Task.CompletedTask;
+        }
 
 
         public CacheScopeTagHelper(
@@ -72,10 +81,7 @@ namespace MVCCaching
             mCacheDependenciesScope = cacheDependenciesScope;
             mCacheDependenciesStore = cacheDependenciesStore;
             mCacheRepositoryContext = cacheRepositoryContext;
-
-            //Using the shared MemoryCache from the factory cause size errors 
             mMemoryCache = memoryCache;
         }
-
     }
 }
