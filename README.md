@@ -230,17 +230,17 @@ public class AlertsViewComponent : ViewComponent
 
 ```html 
 <!-- Will add scoped cache dependency keys -->
-<cache-scope>
+<cache scoped>
     <vc:alerts  />
-</cache-scope>
+</cache>
 <!-- Will add scoped cache dependency keys along with the additional keys passed -->
-<cache-scope additional-keys="@(new [] { $"{Alert.CLASS_NAME}|all" })">
+<cache scoped additional-keys="@(new [] { $"{Alert.CLASS_NAME}|all" })">
     <vc:alerts />
-</cache-scope>
+</cache>
 <!-- Will add scoped cache dependency keys along with the additional keys passed and override the expiresafter value from the system settings -->
-<cache-scope additional-keys="@(new [] { $"{Alert.CLASS_NAME}|all" })" expires-after="@TimeSpan.FromMinutes(60)">
+<cache scoped additional-keys="@(new [] { $"{Alert.CLASS_NAME}|all" })" expires-after="@TimeSpan.FromMinutes(60)">
     <vc:alerts />
-</cache-scope>
+</cache>
 ```
 
 
