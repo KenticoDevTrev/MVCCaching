@@ -1,5 +1,7 @@
-﻿using CMS.DataEngine;
+﻿using CMS.ContactManagement;
+using CMS.DataEngine;
 using CMS.Helpers.Caching;
+using CMS.Membership;
 using CMS.SiteProvider;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -27,6 +29,8 @@ namespace MVCCaching
 
         [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; }
 
+        [HtmlAttributeName("vary-by-contact")] public bool VaryByContact { get; set; }= false;
+
         /// <override />
         public override void Init(TagHelperContext context)
         {
@@ -37,13 +41,35 @@ namespace MVCCaching
             if (!context.AllAttributes.ContainsName(nameof(Enabled)))
                 Enabled = mCacheRepositoryContext.CacheEnabled();
 
+            if (VaryByUser)
+            {
+                var keys = new[]
+                {
+                    $"{UserInfo.OBJECT_TYPE}|byid|{MembershipContext.AuthenticatedUser.UserID}"
+                };
+
+                mCacheDependenciesStore.Store(keys);
+            }
+
+            if (VaryByContact)
+            {
+                VaryByCookie = "CurrentContact";
+
+                var keys = new[]
+                {
+                    $"{ContactInfo.OBJECT_TYPE}|byguid|{ContactManagementContext.CurrentContact.ContactGUID}"
+                };
+
+                mCacheDependenciesStore.Store(keys);
+            }
+
             if (!ExpiresAfter.HasValue)
             {
                 var cacheTimeInMinutes =
                     mCacheRepositoryContext.CacheTimeInMinutes();
 
                 if (cacheTimeInMinutes > 0)
-                    ExpiresAfter = TimeSpan.FromMinutes(cacheTimeInMinutes); 
+                    ExpiresAfter = TimeSpan.FromMinutes(cacheTimeInMinutes);
             }
         }
 
