@@ -176,20 +176,25 @@ When using the `<cache>` tags, you should either use the `scoped` attribute, or 
 
 ```html
 
-<!-- Enabled only if preview mode is true -->
+<!-- Enabled only if preview mode is false -->
 <cache enabled=@CacheRepositoryContext.CacheEnabled() ... >
 
 </cache>
 
-<!-- Enabled only if preview mode is true, 
+<!-- Enabled only if preview mode is false, 
     also sets default duration to the CMS settings key for cache minutes IF you don't have a expires-after set,
     and ensuers user and contact dependency keys are added if vary-by-user and vary-by-contact are added -->
 <cache scoped ... >
 
 </cache>
 
-<!-- Always enabled -->
+<!-- Always enabled, same cache for preview and live -->
 <cache enabled=true>
+
+</cache>
+
+<!-- Always enabled, one cache for preview and one for live -->
+<cache enabled=true vary-by-preview >
 
 </cache>
 ```

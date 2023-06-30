@@ -27,7 +27,7 @@ namespace MVCCaching
 
         [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; }
 
-        [HtmlAttributeName("vary-by-contact")] public bool VaryByContact { get; set; }= false;
+        [HtmlAttributeName("vary-by-contact")] public bool VaryByContact { get; set; } = false;
 
         /// <override />
         public override void Init(TagHelperContext context)
@@ -36,8 +36,8 @@ namespace MVCCaching
 
             mCacheDependenciesScope.Begin();
 
-            if (!context.AllAttributes.ContainsName(nameof(Enabled))) 
-            { 
+            if (!context.AllAttributes.ContainsName(nameof(Enabled)))
+            {
                 Enabled = mCacheRepositoryContext.CacheEnabled();
             }
 
@@ -68,7 +68,7 @@ namespace MVCCaching
                 var cacheTimeInMinutes = mCacheRepositoryContext.CacheTimeInMinutes();
 
                 if (cacheTimeInMinutes > 0)
-                { 
+                {
                     ExpiresAfter = TimeSpan.FromMinutes(cacheTimeInMinutes);
                 }
             }
@@ -77,7 +77,7 @@ namespace MVCCaching
         public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (AdditionalKeys is not null)
-            { 
+            {
                 mCacheDependenciesStore.Store(AdditionalKeys);
             }
 
