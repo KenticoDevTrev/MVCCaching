@@ -1,6 +1,5 @@
 ﻿using CMS.Core;
 using Microsoft.Extensions.DependencyInjection;
-using MVCCaching.Base.Core.Interfaces;
 using MVCCaching.Kentico;
 using System;
 using System.Collections.Generic;

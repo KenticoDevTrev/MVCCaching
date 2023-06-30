@@ -1,5 +1,4 @@
 ﻿using MVCCaching;
-using MVCCaching.Base.Core.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

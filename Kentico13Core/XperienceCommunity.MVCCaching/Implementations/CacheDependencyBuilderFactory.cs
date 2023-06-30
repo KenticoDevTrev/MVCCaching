@@ -1,6 +1,5 @@
 ﻿using CMS.Base;
 using MVCCaching;
-using MVCCaching.Base.Core.Interfaces;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {

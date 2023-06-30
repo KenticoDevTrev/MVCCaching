@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>MVCCaching (Base)</Title>
-    <Version>3.0.2</Version>
+    <Version>4.0.1</Version>
     <PackageId>MVCCaching.Base.Core</PackageId>
     <Authors>Trevor Fayas</Authors>
     <Company>Heartland Business Systems</Company>
@@ -12,7 +12,7 @@
     <Copyright>2022 Heartland Business Systems</Copyright>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-    <PackageReleaseNotes>Removed IRepository and IService, CacheDependency Attributes added ICacheDependencyKeyBuilderFactory and ICacheDependencyKeyBuilder types.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added modifier to the ToCacheRepositoryContextNameIdentifier() to allow 'disabling' cache during editing on preview mode.</PackageReleaseNotes>
     <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>

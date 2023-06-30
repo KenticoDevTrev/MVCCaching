@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace MVCCaching.Base.Core.Interfaces
+﻿namespace MVCCaching
 {
     public interface ICacheDependencyBuilderFactory
     {
