@@ -1,4 +1,5 @@
-﻿using CMS.Localization;
+﻿using CMS.DataEngine;
+using CMS.SiteProvider;
 using Kentico.Content.Web.Mvc;
 using Kentico.Web.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,21 @@ namespace XperienceCommunity.MVCCaching.Implementations
             } catch(Exception)
             {
                 return System.Globalization.CultureInfo.CurrentCulture.Name;
+            }
+        }
+
+        public int CacheTimeInMinutes()
+        {
+            try
+            {
+                var cacheTimeInMinutes =
+                    SettingsKeyInfoProvider.GetIntValue($"{SiteContext.CurrentSiteName}.CMSCacheMinutes");
+
+                return cacheTimeInMinutes;
+            }
+            catch (Exception)
+            {
+                return 0;
             }
         }
 
