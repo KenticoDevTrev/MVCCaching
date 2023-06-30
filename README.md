@@ -20,8 +20,8 @@ public void ConfigureServices(IServiceCollection services)
         {
         services.AddMVCCaching();
         // optional Automatic DI setup, see documentation
-	    // services.AddMVCCachingAutoDependencyInjectionByAttribute();
-	    // services.AddMVCCachingAutoDependencyInjectionBySuffixes(new string[] {"Repository", "Service"});
+	    // services.AddMVCCachingAutoDependencyInjectionByAttribute(); // This looks for any class with [AutoDependencyInjection] and injects it for any interface it implements
+	    // services.AddMVCCachingAutoDependencyInjectionBySuffixes(new string[] {"Repository", "Service"}); // This looks at any class with these suffixes and injects it for any interface it implements
 	    ...
         }
 ```
@@ -187,6 +187,62 @@ public Task<IEnumerable<TreeNode>> GetPagesOnDifferentSiteAsync() {
 		return data;
 }
 ```
+
+## Cache Scope Tag Helper
+
+The tag helper exends the [CacheTagHelper](https://learn.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/built-in/cache-tag-helper?view=aspnetcore-5.0) with the Enabled and ExpireAfter attributes set to a default if not passed.
+
+The Enabled attribute will default to the Preview state of the application, if preview mode is enabled the cache attribute will be disabled.
+
+If the ExpiresAfter attribute is not passed it will default to the Xperience System setting for Server Side Caching found in Settings -> System -> Performance -> Cache content (minutes):
+
+### Example
+```cs
+public class AlertsViewComponent : ViewComponent
+{
+    private readonly IPageRetriever mPageRetriever;
+    private readonly ICacheDependencyBuilderFactory mCacheDependencyBuilderFactory;
+    
+    public AlertsViewComponent(IPageRetriever pageRetriever, ICacheDependencyBuilderFactory cacheDependencyBuilderFactory)
+    {
+        mPageRetriever = pageRetriever;
+        mCacheDependencyBuilderFactory = cacheDependencyBuilderFactory;
+    }
+
+    public async Task<IViewComponentResult> InvokeAsync()
+    {
+        var builder = mCacheDependencyBuilderFactory.Create()
+                        .PagePath("/Alerts", PathTypeEnum.Children);
+
+        var result = await mPageRetriever.RetrieveAsync<Alert>(
+                query => query
+                    .Path("/Alerts", PathTypeEnum.Children)
+                    .OrderBy(nameof(TreeNode.NodeLevel), nameof(TreeNode.NodeOrder)),
+                cacheSettings => cacheSettings.Configure(builder, 60, "GetTabsAsync", "/Alerts")
+        );
+
+        var model = result.Select(AlertViewModel.ToViewModel);
+
+        return View("~/Components/ViewComponents/Alerts/Default.cshtml", model);
+    }
+}
+```
+
+```html 
+<!-- Will add scoped cache dependency keys -->
+<cache scoped>
+    <vc:alerts  />
+</cache>
+<!-- Will add scoped cache dependency keys along with the additional keys passed -->
+<cache scoped additional-keys="@(new [] { $"{Alert.CLASS_NAME}|all" })">
+    <vc:alerts />
+</cache>
+<!-- Will add scoped cache dependency keys along with the additional keys passed and override the expiresafter value from the system settings -->
+<cache scoped additional-keys="@(new [] { $"{Alert.CLASS_NAME}|all" })" expires-after="@TimeSpan.FromMinutes(60)">
+    <vc:alerts />
+</cache>
+```
+
 
 # Other Tools
 ## Cache Durations
