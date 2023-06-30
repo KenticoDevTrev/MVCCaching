@@ -153,12 +153,46 @@ When you want caching disable for Preview Mode, you must do the following:
 **Data Caching**
 When using the `IProgressiveCache` or `CacheHelper`, set the `cs` (CacheSettings) `Cached` value to the `ICacheRepositoryContext.CacheEnabled()` value (false for preview).
 
+```cs
+    return await _progressiveCache.LoadAsync(async cs =>
+            {
+                // Disable cache on preview so editors can see this
+                cs.Cached = _cacheRepositoryContext.CacheEnabled();
+
+                if(cs.Cached)
+                {
+                    cs.CacheDependency = builder.GetCMSCacheDependency();
+                }
+                ...
+            }, new CacheSettings(CacheMinuteTypes.VeryLong.ToDouble(), "SomeUniqueName", _cacheRepositoryContext.ToCacheRepositoryContextNameIdentifier(), otherKeys));
+```
+
 This will disable the cache all together.
 
 When using `IPageRetriever`, caching is disabled for Preview mode by default always.
 
 **Output Caching**
 When using the `<cache>` tags, you should either use the `scoped` attribute, or set `enabled=@CacheRepositoryContext.CacheEnabled()` within it.
+
+```html
+
+<!-- Enabled only if preview mode is true -->
+<cache enabled=@CacheRepositoryContext.CacheEnabled() ... >
+
+</cache>
+
+<!-- Enabled only if preview mode is true, 
+    also sets default duration to the CMS settings key for cache minutes IF you don't have a expires-after set,
+    and ensuers user and contact dependency keys are added if vary-by-user and vary-by-contact are added -->
+<cache scoped ... >
+
+</cache>
+
+<!-- Always enabled -->
+<cache enabled=true>
+
+</cache>
+```
 
 Note that, for some reason, if you do NOT set the `enabled` parameter, it seems to default to `false` when in development mode, and true when in production/release, resulting in possible testing issues.  Using the `scoped` attribute will set this value always.  If you always want it to `true`, you should explicitly set it to true.
 
