@@ -1,9 +1,8 @@
-﻿using CMS.ContactManagement;
-using CMS.Helpers.Caching;
-using CMS.Membership;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
+﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Caching.Memory;
+using MVCCaching.Internal;
 using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -17,15 +16,14 @@ namespace MVCCaching
         public const string TARGET_ATTRIBUTE = "scoped";
         public const string KEYS_ATTRIBUTE = "additional-keys";
 
-        private readonly ICacheDependencyAdapter mCacheDependencyAdapter;
-        private readonly ICacheDependenciesScope mCacheDependenciesScope;
-        private readonly ICacheDependenciesStore mCacheDependenciesStore;
-        private readonly ICacheRepositoryContext mCacheRepositoryContext;
-        private readonly IMemoryCache mMemoryCache;
+        private readonly ICacheDependenciesScope _cacheDependenciesScope;
+        private readonly ICacheDependenciesStore _cacheDependenciesStore;
+        private readonly ICacheRepositoryContext _cacheRepositoryContext;
+        private readonly ICacheTagHelperService _cacheTagHelperService;
 
         public override int Order => 2;
 
-        [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; }
+        [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; } = Array.Empty<string>();
 
         [HtmlAttributeName("vary-by-contact")] public bool VaryByContact { get; set; } = false;
 
@@ -34,21 +32,21 @@ namespace MVCCaching
         {
             base.Init(context);
 
-            mCacheDependenciesScope.Begin();
+            _cacheDependenciesScope.Begin();
 
             if (!context.AllAttributes.ContainsName(nameof(Enabled)))
             {
-                Enabled = mCacheRepositoryContext.CacheEnabled();
+                Enabled = _cacheRepositoryContext.CacheEnabled();
             }
 
             if (VaryByUser)
             {
                 var keys = new[]
                 {
-                    $"{UserInfo.OBJECT_TYPE}|byid|{MembershipContext.AuthenticatedUser?.UserID ?? 0}"
+                    _cacheTagHelperService.GetUserDependencyKey()
                 };
 
-                mCacheDependenciesStore.Store(keys);
+                _cacheDependenciesStore.Store(keys);
             }
 
             if (VaryByContact)
@@ -57,15 +55,15 @@ namespace MVCCaching
 
                 var keys = new[]
                 {
-                    $"{ContactInfo.OBJECT_TYPE}|byguid|{ContactManagementContext.CurrentContact?.ContactGUID ?? Guid.Empty}"
+                    _cacheTagHelperService.GetContactDependencyKey()
                 };
 
-                mCacheDependenciesStore.Store(keys);
+                _cacheDependenciesStore.Store(keys);
             }
 
             if (!ExpiresAfter.HasValue)
             {
-                var cacheTimeInMinutes = mCacheRepositoryContext.CacheTimeInMinutes();
+                var cacheTimeInMinutes = _cacheRepositoryContext.CacheTimeInMinutes();
 
                 if (cacheTimeInMinutes > 0)
                 {
@@ -78,21 +76,17 @@ namespace MVCCaching
         {
             if (AdditionalKeys is not null)
             {
-                mCacheDependenciesStore.Store(AdditionalKeys);
+                _cacheDependenciesStore.Store(AdditionalKeys);
             }
 
-            var cacheKeys = mCacheDependenciesScope.End();
+            var cacheKeys = _cacheDependenciesScope.End();
 
             if (!Enabled || cacheKeys is { Length: 0 })
             {
                 return Task.CompletedTask;
             }
 
-            var changeToken = mCacheDependencyAdapter.GetChangeToken(cacheKeys);
-
-            var key = $"{Guid.NewGuid()}";
-            mMemoryCache.Set(key, (object)null, changeToken);
-            mMemoryCache.Remove(key);
+            _cacheTagHelperService.ChangeCacheTokenKeys(cacheKeys);
 
             return Task.CompletedTask;
         }
@@ -101,18 +95,17 @@ namespace MVCCaching
         public CacheScopeTagHelper(
             CacheTagHelperMemoryCacheFactory factory,
             HtmlEncoder htmlEncoder,
-            ICacheDependencyAdapter cacheDependencyAdapter,
             ICacheDependenciesScope cacheDependenciesScope,
             ICacheDependenciesStore cacheDependenciesStore,
             ICacheRepositoryContext cacheRepositoryContext,
+            ICacheTagHelperService cacheTagHelperService,
             IMemoryCache memoryCache)
             : base(factory, htmlEncoder)
         {
-            mCacheDependencyAdapter = cacheDependencyAdapter;
-            mCacheDependenciesScope = cacheDependenciesScope;
-            mCacheDependenciesStore = cacheDependenciesStore;
-            mCacheRepositoryContext = cacheRepositoryContext;
-            mMemoryCache = memoryCache;
+            _cacheDependenciesScope = cacheDependenciesScope;
+            _cacheDependenciesStore = cacheDependenciesStore;
+            _cacheRepositoryContext = cacheRepositoryContext;
+            _cacheTagHelperService = cacheTagHelperService;
         }
     }
 }

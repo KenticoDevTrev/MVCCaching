@@ -8,19 +8,19 @@
     <Description>Caching interfaces and extensions for Kentico Xperience .net 5.0 MVC Sites</Description>
     <PackageProjectUrl>https://raw.githubusercontent.com/KenticoDevTrev</PackageProjectUrl>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
-    <Version>13.16.1</Version>
+    <Version>13.16.3</Version>
     <Copyright>Heartland Business Systems</Copyright>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile></PackageReadmeFile>
     <RepositoryUrl>https://raw.githubusercontent.com/KenticoDevTrev</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Xperience, Kentico, Xperience 13, Caching</PackageTags>
-    <PackageReleaseNotes>Added PR for Scoped tag helper (sets time, user and contact scoping), removed the bool toggle added in 4.0.1 since actually not needed,updated site readme.</PackageReleaseNotes>
+    <PackageReleaseNotes>Moved tag helpers from PR to separate package and referenced.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Kentico.Xperience.AspNetCore.WebApp" Version="13.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.0" />
-    <PackageReference Include="MVCCaching.Base.Core" Version="4.0.2" />
+    <PackageReference Include="MVCCaching.Base.Core" Version="4.2.0" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -28,10 +28,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="..\..\..\hbs-favicon-96x96.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\..\README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>

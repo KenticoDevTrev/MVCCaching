@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace MVCCaching
 {

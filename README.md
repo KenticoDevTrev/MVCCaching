@@ -12,7 +12,7 @@ If migrating from KX12 MVCCaching.Kentico, or KX13 MVCCaching.Kentico / MVCCachi
 # Installation
 
 1. Install the Nuget Package `XperienceCommunity.MVCCaching` on your MVC.Net Core application.  
-  - If you have Kentico-Agnostic libraries and need to implement the basic interfaces (such as `ICacheKey`) or leverage the Automatic DI, you can add the `MVCCaching.Base.Core` nuget package.
+  - If you have Kentico-Agnostic libraries and need to implement the basic interfaces (such as `ICacheKey`) or leverage the Automatic DI, you can add the `MVCCaching.Base.Core` nuget package, and for any razor-enabled project, `MVCCaching.Base.Core.Components`.
 
 3. On your IServiceCollection, add MVCCaching and optionally the automatic Dependency injection: 
 ```csharp
@@ -24,6 +24,11 @@ public void ConfigureServices(IServiceCollection services)
 	    // services.AddMVCCachingAutoDependencyInjectionBySuffixes(new string[] {"Repository", "Service"}); // This looks at any class with these suffixes and injects it for any interface it implements
 	    ...
         }
+```
+
+Optionally add the Tag Helper for the MVCCaching.Base.Core.Components tag helpers, this adds to the `<cache>` tag the attributes `vary-by-preview` and `scoped`
+```html
+@addTagHelper *, MVCCaching.Base.Core.Components
 ```
 
 
@@ -175,6 +180,7 @@ When using `IPageRetriever`, caching is disabled for Preview mode by default alw
 When using the `<cache>` tags, you should either use the `scoped` attribute, or set `enabled=@CacheRepositoryContext.CacheEnabled()` within it.
 
 ```html
+@addTagHelper *, MVCCaching.Base.Core.Components
 
 // Enabled only if preview mode is false
 <cache enabled=@CacheRepositoryContext.CacheEnabled() ... >

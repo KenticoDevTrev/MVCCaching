@@ -1,5 +1,6 @@
 ﻿using CMS.Core;
 using Microsoft.Extensions.DependencyInjection;
+using MVCCaching.Internal;
 using MVCCaching.Kentico;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace MVCCaching
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependencyBuilderFactory, CacheDependencyBuilderFactory>()
                 .AddScoped<ICacheRepositoryContext, CacheRepositoryContext>()
+                .AddScoped<ICacheTagHelperService, CacheTagHelperService>()
                 .AddSingleton<IContentItemMetadataProvider, ContentItemMetadataProvider>();
         }
 

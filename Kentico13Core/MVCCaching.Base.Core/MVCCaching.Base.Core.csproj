@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>MVCCaching (Base)</Title>
-    <Version>4.0.2</Version>
+    <Version>4.2.0</Version>
     <PackageId>MVCCaching.Base.Core</PackageId>
     <Authors>Trevor Fayas</Authors>
     <Company>Heartland Business Systems</Company>
@@ -12,9 +12,10 @@
     <Copyright>2022 Heartland Business Systems</Copyright>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-    <PackageReleaseNotes>Removed identifier...don't actually need it, added instructions on extension method though.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add some more methods needed</PackageReleaseNotes>
     <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
