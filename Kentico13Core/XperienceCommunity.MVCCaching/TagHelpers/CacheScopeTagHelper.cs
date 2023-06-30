@@ -1,8 +1,6 @@
 ﻿using CMS.ContactManagement;
-using CMS.DataEngine;
 using CMS.Helpers.Caching;
 using CMS.Membership;
-using CMS.SiteProvider;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Caching.Memory;
@@ -38,14 +36,16 @@ namespace MVCCaching
 
             mCacheDependenciesScope.Begin();
 
-            if (!context.AllAttributes.ContainsName(nameof(Enabled)))
+            if (!context.AllAttributes.ContainsName(nameof(Enabled))) 
+            { 
                 Enabled = mCacheRepositoryContext.CacheEnabled();
+            }
 
             if (VaryByUser)
             {
                 var keys = new[]
                 {
-                    $"{UserInfo.OBJECT_TYPE}|byid|{MembershipContext.AuthenticatedUser.UserID}"
+                    $"{UserInfo.OBJECT_TYPE}|byid|{MembershipContext.AuthenticatedUser?.UserID ?? 0}"
                 };
 
                 mCacheDependenciesStore.Store(keys);
@@ -57,7 +57,7 @@ namespace MVCCaching
 
                 var keys = new[]
                 {
-                    $"{ContactInfo.OBJECT_TYPE}|byguid|{ContactManagementContext.CurrentContact.ContactGUID}"
+                    $"{ContactInfo.OBJECT_TYPE}|byguid|{ContactManagementContext.CurrentContact?.ContactGUID ?? Guid.Empty}"
                 };
 
                 mCacheDependenciesStore.Store(keys);
@@ -65,23 +65,28 @@ namespace MVCCaching
 
             if (!ExpiresAfter.HasValue)
             {
-                var cacheTimeInMinutes =
-                    mCacheRepositoryContext.CacheTimeInMinutes();
+                var cacheTimeInMinutes = mCacheRepositoryContext.CacheTimeInMinutes();
 
                 if (cacheTimeInMinutes > 0)
+                { 
                     ExpiresAfter = TimeSpan.FromMinutes(cacheTimeInMinutes);
+                }
             }
         }
 
         public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (AdditionalKeys is not null)
+            { 
                 mCacheDependenciesStore.Store(AdditionalKeys);
+            }
 
             var cacheKeys = mCacheDependenciesScope.End();
 
             if (!Enabled || cacheKeys is { Length: 0 })
+            {
                 return Task.CompletedTask;
+            }
 
             var changeToken = mCacheDependencyAdapter.GetChangeToken(cacheKeys);
 

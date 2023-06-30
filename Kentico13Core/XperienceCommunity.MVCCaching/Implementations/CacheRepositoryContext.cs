@@ -1,5 +1,5 @@
-﻿using CMS.DataEngine;
-using CMS.SiteProvider;
+﻿using CMS.Base;
+using CMS.DataEngine;
 using Kentico.Content.Web.Mvc;
 using Kentico.Web.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -11,9 +11,12 @@ namespace XperienceCommunity.MVCCaching.Implementations
 {
     public class CacheRepositoryContext : ICacheRepositoryContext
     {
-        public CacheRepositoryContext(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        private readonly ISiteService _siteService;
+
+        public CacheRepositoryContext(IHttpContextAccessor httpContextAccessor, ISiteService siteService)
         {
             _httpContextAccessor = httpContextAccessor;
+            _siteService = siteService;
         }
 
         public IHttpContextAccessor _httpContextAccessor { get; }
@@ -38,7 +41,7 @@ namespace XperienceCommunity.MVCCaching.Implementations
             try
             {
                 var cacheTimeInMinutes =
-                    SettingsKeyInfoProvider.GetIntValue($"{SiteContext.CurrentSiteName}.CMSCacheMinutes");
+                    SettingsKeyInfoProvider.GetIntValue($"{_siteService.CurrentSite.SiteName}.CMSCacheMinutes");
 
                 return cacheTimeInMinutes;
             }

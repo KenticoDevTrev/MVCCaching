@@ -141,6 +141,28 @@ public async Task<Maybe<RoleItem>> GetRoleAsync(string roleName, string siteName
 
 ```
 
+## Caching for Preview Mode and Cache Enabled
+As you cache your data, you must decide if you want the data to cache during Preview mode or not.  
+
+As a general rule of thumb, if it's something a user is going to be editing and needs to see the changes, then you wouldn't want to cache it.
+
+However, if it's an expensive operation and isn't something heavily edited, it may increase the Editor's experience on other pages if widely used views and data calls remain cached even in preview mode.
+
+When you want caching disable for Preview Mode, you must do the following:
+
+**Data Caching**
+When using the `IProgressiveCache` or `CacheHelper`, set the `cs` (CacheSettings) `Cached` value to the `ICacheRepositoryContext.CacheEnabled()` value (false for preview).
+
+This will disable the cache all together.
+
+When using `IPageRetriever`, caching is disabled for Preview mode by default always.
+
+**Output Caching**
+When using the `<cache>` tags, you should either use the `scoped` attribute, or set `enabled=@CacheRepositoryContext.CacheEnabled()` within it.
+
+Note that, for some reason, if you do NOT set the `enabled` parameter, it seems to default to `false` when in development mode, and true when in production/release, resulting in possible testing issues.  Using the `scoped` attribute will set this value always.  If you always want it to `true`, you should explicitly set it to true.
+
+
 ## Extending ICacheDependencyBuilder
 You can easily create your own extension methods to suit your purposes for your site.  You can reference the [ICacheDependencyBuilderExtensions.cs](#) File in this repository to get an idea of how to add your own. 
 
