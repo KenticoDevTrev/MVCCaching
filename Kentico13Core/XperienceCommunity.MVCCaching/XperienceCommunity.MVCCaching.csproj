@@ -20,7 +20,6 @@
   <ItemGroup>
     <PackageReference Include="Kentico.Xperience.AspNetCore.WebApp" Version="13.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.0" />
-    <PackageReference Include="MVCCaching.Base.Core" Version="4.2.0" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -31,6 +30,9 @@
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
 	</ItemGroup>
 
 </Project>

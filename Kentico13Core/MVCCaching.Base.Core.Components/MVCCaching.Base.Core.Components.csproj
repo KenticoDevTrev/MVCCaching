@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
+	
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 	  <Description>Tag Helper Components used with MVCCaching.Base.Core</Description>
 	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
@@ -19,7 +20,11 @@
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
     <None Include="..\..\..\hbs-favicon-96x96.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -32,8 +37,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.AspNetCore.WebApp" Version="13.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
-    <PackageReference Include="MVCCaching.Base.Core" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
   </ItemGroup>
 
 </Project>
