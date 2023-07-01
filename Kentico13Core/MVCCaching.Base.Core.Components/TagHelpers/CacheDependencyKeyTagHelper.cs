@@ -2,7 +2,6 @@
 using Kentico.Web.Mvc.Caching;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
-using System.Linq;
 
 namespace MVCCaching.Base.Core.Components.TagHelpers
 {
@@ -23,7 +22,6 @@ namespace MVCCaching.Base.Core.Components.TagHelpers
         {
             if (!context.AllAttributes.ContainsName(nameof(Enabled)))
                 Enabled = _cacheRepositoryContext.CacheEnabled();
-            
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -31,9 +29,22 @@ namespace MVCCaching.Base.Core.Components.TagHelpers
             ArgumentNullException.ThrowIfNull(context);
             ArgumentNullException.ThrowIfNull(output);
 
-            CacheKeys = CacheKeys.Union(_cacheDependenciesScope.End()).ToArray();
+            CacheKeys = MergeKeys();
 
             base.Process(context, output);
+        }
+
+        private string[] MergeKeys()
+        {
+            var firstArray = CacheKeys ?? Array.Empty<string>();
+            var secondArray = _cacheDependenciesScope.End();
+
+            var combinedArray = new string[firstArray.Length + secondArray.Length];
+            for (var i = 0; i < combinedArray.Length; i++)
+            {
+                combinedArray[i] = i >= firstArray.Length ? secondArray[i - firstArray.Length] : firstArray[i];
+            }
+            return combinedArray;
         }
 
         public CacheDependencyKeyTagHelper(ICacheDependencyAdapter cacheDependencyAdapter, ICacheRepositoryContext cacheRepositoryContext, ICacheDependenciesScope cacheDependenciesScope) : base(cacheDependencyAdapter)
