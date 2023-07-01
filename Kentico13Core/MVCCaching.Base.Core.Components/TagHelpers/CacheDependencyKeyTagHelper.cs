@@ -26,8 +26,11 @@ namespace MVCCaching.Base.Core.Components.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            ArgumentNullException.ThrowIfNull(context);
-            ArgumentNullException.ThrowIfNull(output);
+            if(context is null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
 
             CacheKeys = MergeKeys();
 
