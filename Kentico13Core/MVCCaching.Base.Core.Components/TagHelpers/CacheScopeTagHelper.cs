@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Extensions.Caching.Memory;
-using MVCCaching.Internal;
 using System;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace MVCCaching
 {
@@ -14,20 +10,18 @@ namespace MVCCaching
     public class CacheScopeTagHelper : CacheTagHelper
     {
         public const string TARGET_ATTRIBUTE = "scoped";
-        public const string KEYS_ATTRIBUTE = "additional-keys";
 
         private readonly ICacheDependenciesScope _cacheDependenciesScope;
-        private readonly ICacheDependenciesStore _cacheDependenciesStore;
-        private readonly ICacheRepositoryContext _cacheRepositoryContext;
-        private readonly ICacheTagHelperService _cacheTagHelperService;
+        protected readonly ICacheRepositoryContext _cacheRepositoryContext;
 
-        public override int Order => 2;
 
-        [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; } = Array.Empty<string>();
+        public override int Order => 1;
 
-        [HtmlAttributeName("vary-by-contact")] public bool VaryByContact { get; set; } = false;
 
-        /// <override />
+        /// <summary>
+        /// Initializes the cache scope
+        /// </summary>
+        /// <param name="context"></param>
         public override void Init(TagHelperContext context)
         {
             base.Init(context);
@@ -39,27 +33,6 @@ namespace MVCCaching
                 Enabled = _cacheRepositoryContext.CacheEnabled();
             }
 
-            if (VaryByUser)
-            {
-                var keys = new[]
-                {
-                    _cacheTagHelperService.GetUserDependencyKey()
-                };
-
-                _cacheDependenciesStore.Store(keys);
-            }
-
-            if (VaryByContact)
-            {
-                VaryByCookie = "CurrentContact";
-
-                var keys = new[]
-                {
-                    _cacheTagHelperService.GetContactDependencyKey()
-                };
-
-                _cacheDependenciesStore.Store(keys);
-            }
 
             if (!ExpiresAfter.HasValue)
             {
@@ -72,40 +45,14 @@ namespace MVCCaching
             }
         }
 
-        public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
-        {
-            if (AdditionalKeys is not null)
-            {
-                _cacheDependenciesStore.Store(AdditionalKeys);
-            }
 
-            var cacheKeys = _cacheDependenciesScope.End();
+     
 
-            if (!Enabled || cacheKeys is { Length: 0 })
-            {
-                return Task.CompletedTask;
-            }
-
-            _cacheTagHelperService.ChangeCacheTokenKeys(cacheKeys);
-
-            return Task.CompletedTask;
-        }
-
-
-        public CacheScopeTagHelper(
-            CacheTagHelperMemoryCacheFactory factory,
-            HtmlEncoder htmlEncoder,
-            ICacheDependenciesScope cacheDependenciesScope,
-            ICacheDependenciesStore cacheDependenciesStore,
-            ICacheRepositoryContext cacheRepositoryContext,
-            ICacheTagHelperService cacheTagHelperService,
-            IMemoryCache memoryCache)
+        public CacheScopeTagHelper(CacheTagHelperMemoryCacheFactory factory, HtmlEncoder htmlEncoder, ICacheRepositoryContext cacheRepositoryContext, ICacheDependenciesScope cacheDependenciesScope) 
             : base(factory, htmlEncoder)
         {
-            _cacheDependenciesScope = cacheDependenciesScope;
-            _cacheDependenciesStore = cacheDependenciesStore;
             _cacheRepositoryContext = cacheRepositoryContext;
-            _cacheTagHelperService = cacheTagHelperService;
+            _cacheDependenciesScope = cacheDependenciesScope;
         }
     }
 }
