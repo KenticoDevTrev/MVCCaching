@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 	  <Description>Tag Helper Components used with MVCCaching.Base.Core</Description>
 	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
 	  <Title>MVCCaching (Base) Components</Title>
-	  <Version>4.3.0</Version>
+	  <Version>4.3.1</Version>
 	  <Authors>Trevor Fayas</Authors>
 	  <Company>Heartland Business Systems</Company>
 	  <Copyright>2022 Heartland Business Systems</Copyright>

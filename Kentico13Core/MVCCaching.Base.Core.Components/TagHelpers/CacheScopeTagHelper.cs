@@ -21,7 +21,21 @@ namespace MVCCaching
         private readonly ICacheRepositoryContext _cacheRepositoryContext;
         private readonly ICacheTagHelperService _cacheTagHelperService;
 
-        public override int Order => 2;
+        public CacheScopeTagHelper(
+            HtmlEncoder htmlEncoder,
+            ICacheDependenciesScope cacheDependenciesScope,
+            ICacheDependenciesStore cacheDependenciesStore,
+            ICacheRepositoryContext cacheRepositoryContext,
+            ICacheTagHelperService cacheTagHelperService)
+            : base(htmlEncoder)
+        {
+            _cacheDependenciesScope = cacheDependenciesScope;
+            _cacheDependenciesStore = cacheDependenciesStore;
+            _cacheRepositoryContext = cacheRepositoryContext;
+            _cacheTagHelperService = cacheTagHelperService;
+        }
+
+        public override int Order => 100;
 
         [HtmlAttributeName(KEYS_ATTRIBUTE)] public string[] AdditionalKeys { get; set; } = Array.Empty<string>();
 
@@ -33,11 +47,6 @@ namespace MVCCaching
             base.Init(context);
 
             _cacheDependenciesScope.Begin();
-
-            if (!context.AllAttributes.ContainsName(nameof(Enabled)))
-            {
-                Enabled = _cacheRepositoryContext.CacheEnabled();
-            }
 
             if (VaryByUser)
             {
@@ -74,6 +83,11 @@ namespace MVCCaching
 
         public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
+            if (!context.AllAttributes.ContainsName(nameof(Enabled)))
+            {
+                Enabled = _cacheRepositoryContext.CacheEnabled();
+            }
+
             if (AdditionalKeys is not null)
             {
                 _cacheDependenciesStore.Store(AdditionalKeys);
@@ -92,20 +106,5 @@ namespace MVCCaching
         }
 
 
-        public CacheScopeTagHelper(
-            CacheTagHelperMemoryCacheFactory factory,
-            HtmlEncoder htmlEncoder,
-            ICacheDependenciesScope cacheDependenciesScope,
-            ICacheDependenciesStore cacheDependenciesStore,
-            ICacheRepositoryContext cacheRepositoryContext,
-            ICacheTagHelperService cacheTagHelperService,
-            IMemoryCache memoryCache)
-            : base(factory, htmlEncoder)
-        {
-            _cacheDependenciesScope = cacheDependenciesScope;
-            _cacheDependenciesStore = cacheDependenciesStore;
-            _cacheRepositoryContext = cacheRepositoryContext;
-            _cacheTagHelperService = cacheTagHelperService;
-        }
     }
 }

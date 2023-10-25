@@ -6,14 +6,14 @@ using System.Text.Encodings.Web;
 namespace MVCCaching
 {
     [HtmlTargetElement("cache", Attributes = TARGET_ATTRIBUTE)]
-    public class CacheVaryByPreviewTagHelper : CacheTagHelper
+    public class CacheVaryByPreviewTagHelper : CacheTagHelperBase
     {
        
         public const string TARGET_ATTRIBUTE = "vary-by-preview";
         private readonly ICacheRepositoryContext _cacheRepositoryContext;
 
-        public CacheVaryByPreviewTagHelper(CacheTagHelperMemoryCacheFactory factory,
-            HtmlEncoder htmlEncoder, ICacheRepositoryContext cacheRepositoryContext) : base(factory, htmlEncoder)
+        public CacheVaryByPreviewTagHelper(HtmlEncoder htmlEncoder, 
+            ICacheRepositoryContext cacheRepositoryContext) : base(htmlEncoder)
         {
             _cacheRepositoryContext = cacheRepositoryContext;
         }
