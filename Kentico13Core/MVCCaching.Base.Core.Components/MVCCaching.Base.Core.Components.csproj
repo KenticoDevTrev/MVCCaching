@@ -6,7 +6,7 @@
 	  <Description>Tag Helper Components used with MVCCaching.Base.Core</Description>
 	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
 	  <Title>MVCCaching (Base) Components</Title>
-	  <Version>4.3.0</Version>
+	  <Version>4.4.0</Version>
 	  <Authors>Trevor Fayas</Authors>
 	  <Company>Heartland Business Systems</Company>
 	  <Copyright>2022 Heartland Business Systems</Copyright>
@@ -15,7 +15,7 @@
 	  <RepositoryType>git</RepositoryType>
 	  <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
 	  <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
-	  <PackageReleaseNotes>Trying to switch to .net 5 instead of .net 6</PackageReleaseNotes>
+	  <PackageReleaseNotes>Added <cache-dependency-mvc /> tag helper as a way to pass cache dependency keys into cache via the ICacheDependenciesAdapater</PackageReleaseNotes>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
-    <PackageReference Include="MVCCaching.Base.Core" Version="4.2.0" />
+    <PackageReference Include="MVCCaching.Base.Core" Version="4.4.0" />
   </ItemGroup>
 
 </Project>

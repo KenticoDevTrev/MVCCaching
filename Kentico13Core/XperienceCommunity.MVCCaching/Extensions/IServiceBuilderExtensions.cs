@@ -15,6 +15,7 @@ namespace MVCCaching
         public static IServiceCollection AddMVCCaching(this IServiceCollection services)
         {
             return services
+                .AddSingleton<ICacheDependenciesAdapter, CacheDependenciesAdapater>()
                 .AddScoped<CacheDependenciesStoreAndScope>()
                 .AddScoped<ICacheDependenciesStore>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())

@@ -39,7 +39,7 @@ Kentico Xperience provides it's integrated Cache Dependency system, which trigge
 
 During the calling of these operations, you define Cache Dependency Keys, which are attached to that cached operation . If the keys get touched (can be manually touched or automatically by Kentico Xperience), the caches automatically 'clear' for that item.
 
-MVC.Net Core provides output caching using the `<cache>` tag helper.  Kentico Xperience has added a `<cache-depencency />` tag helper within that to allow you to pass cache dependencies, and thus also properly clear the `<cache>` content if the keys are touched.
+MVC.Net Core provides output caching using the `<cache>` tag helper.  Kentico Xperience has added a `<cache-dependency />` (or MVCCaching's `<cache-dependency-mvc />`) tag helper within that to allow you to pass cache dependencies, and thus also properly clear the `<cache>` content if the keys are touched.
 
 **The problems are**:
 1. There is no default way to know what all cache dependencies are added within a `<cache>` tag
@@ -83,6 +83,7 @@ public async Task<IViewComponentResult> InvokeAsync()
 	<h1>@Model.Greeting</h1>
 	<p>Some lengthy operation warranty caching...</p>
     <cache-dependency cache-keys="@CacheScope.End()" />
+    @* OR <cache-dependency-mvc cache-keys="@CacheScope.End()"> *@
 </cache>
 ```
 
