@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>MVCCaching (Base)</Title>
-    <Version>4.2.0</Version>
+    <Version>4.4.0</Version>
     <PackageId>MVCCaching.Base.Core</PackageId>
     <Authors>Trevor Fayas</Authors>
     <Company>Heartland Business Systems</Company>
@@ -12,7 +12,7 @@
     <Copyright>2022 Heartland Business Systems</Copyright>
     <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-    <PackageReleaseNotes>Add some more methods needed</PackageReleaseNotes>
+    <PackageReleaseNotes>Added ICacheDependenciesAdapter interface for setting Cache tag dependency keys</PackageReleaseNotes>
     <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryType>git</RepositoryType>
@@ -23,6 +23,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.1.8" />
   </ItemGroup>
 
 </Project>
