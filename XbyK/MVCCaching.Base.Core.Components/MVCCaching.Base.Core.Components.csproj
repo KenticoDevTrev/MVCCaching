@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+	  <Description>Tag Helper Components used with MVCCaching.Base.Core</Description>
+	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
+	  <Title>MVCCaching (Base) Components</Title>
+	  <Version>8.4.0</Version>
+	  <Authors>Trevor Fayas</Authors>
+	  <Company>Heartland Business Systems</Company>
+	  <Copyright>2022 Heartland Business Systems</Copyright>
+	  <PackageProjectUrl>https://github.com/KenticoDevTrev/MVCCaching</PackageProjectUrl>
+	  <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
+	  <RepositoryType>git</RepositoryType>
+	  <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
+	  <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
+	  <PackageReleaseNotes>Added <cache-dependency-mvc /> tag helper as a way to pass cache dependency keys into cache via the ICacheDependenciesAdapater</PackageReleaseNotes>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\hbs-favicon-96x96.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
+  </ItemGroup>
+
+</Project>
