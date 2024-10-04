@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
 	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-	  <Description>Tag Helper Components used with MVCCaching.Base.Core</Description>
+	  <Description>Tag Helper Components used with MVCCaching.Base.Core.  This one is built for .net 8.0</Description>
 	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
 	  <Title>MVCCaching (Base) Components</Title>
-	  <Version>8.4.0</Version>
+	  <Version>8.0.0</Version>
 	  <Authors>Trevor Fayas</Authors>
 	  <Company>Heartland Business Systems</Company>
 	  <Copyright>2022 Heartland Business Systems</Copyright>

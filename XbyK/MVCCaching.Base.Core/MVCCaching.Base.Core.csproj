@@ -3,23 +3,23 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>MVCCaching (Base)</Title>
-    <Version>4.4.0</Version>
+    <Version>4.5.0</Version>
     <PackageId>MVCCaching.Base.Core</PackageId>
     <Authors>Trevor Fayas</Authors>
-    <Company>Heartland Business Systems</Company>
+    <Company>KenticoDevTrev</Company>
     <PackageProjectUrl>https://github.com/KenticoDevTrev/MVCCaching</PackageProjectUrl>
-    <Description>Base Attribute and Intefaces for MVC Caching to be implemented with.    Designed for XperienceCommunity.MVCCaching.Core code files found on github.com, but could be extended to other uses.</Description>
-    <Copyright>2022 Heartland Business Systems</Copyright>
-    <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
+    <Description>Base Attribute and Intefaces for MVC Caching to be implemented with.    Designed for XperienceCommunity.MVCCaching.Core and XperienceCommunity.DevTools.MVCCaching code files found on github.com, but could be extended to other uses.</Description>
+    <Copyright>2024 Trevor Fayas</Copyright>
+    <PackageIcon>DotNetIcon-128x128.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-    <PackageReleaseNotes>Added ICacheDependenciesAdapter interface for setting Cache tag dependency keys</PackageReleaseNotes>
+    <PackageReleaseNotes>Made the ICacheRepository inherit from ICacheKey so the normal .ToCacheNameIdentifier() would work properly.</PackageReleaseNotes>
     <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\hbs-favicon-96x96.png">
+    <None Include="..\..\..\DotNetIcon-128x128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

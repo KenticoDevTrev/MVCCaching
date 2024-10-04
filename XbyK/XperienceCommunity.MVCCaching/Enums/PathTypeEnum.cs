@@ -1,4 +1,4 @@
-﻿namespace XperienceCommunity.MVCCaching.Enums
+﻿namespace MVCCaching
 {
     public enum PathTypeEnum
     {

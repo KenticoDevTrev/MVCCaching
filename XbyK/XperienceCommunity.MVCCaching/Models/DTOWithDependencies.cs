@@ -3,7 +3,7 @@ using CMS.DataEngine;
 using CMS.Websites;
 using System.Collections.Generic;
 
-namespace XperienceCommunity.MVCCaching.Models
+namespace MVCCaching
 {
     /// <summary>
     /// Simple DTO Wrapper to include additional dependencies that should be passed outside of the cached method and added to the general scope.  
@@ -12,27 +12,27 @@ namespace XperienceCommunity.MVCCaching.Models
     /// <typeparam name="T"></typeparam>
     /// <param name="Result">The Result you want to return from your cached method</param>
     /// <param name="AdditionalDependencies">Additional Dependencies</param>
-    public record DTOWrapperForAdditionalDependencies<T>
+    public record DTOWithDependencies<T>
     {
-        public DTOWrapperForAdditionalDependencies(T result) {
+        public DTOWithDependencies(T result) {
             Result = result;
         }
-        public DTOWrapperForAdditionalDependencies(T result, List<string> additionalDependencies)
+        public DTOWithDependencies(T result, List<string> additionalDependencies)
         {
             Result = result;
             AdditionalDependencies = additionalDependencies;
         }
-        public DTOWrapperForAdditionalDependencies(T result, List<IContentItemFieldsSource> contentItems)
+        public DTOWithDependencies(T result, List<IContentItemFieldsSource> contentItems)
         {
             Result = result;
             ContentItems = contentItems;
         }
-        public DTOWrapperForAdditionalDependencies(T result, List<IWebPageFieldsSource> webPageItems)
+        public DTOWithDependencies(T result, List<IWebPageFieldsSource> webPageItems)
         {
             Result = result;
             WebPageItems = webPageItems;
         }
-        public DTOWrapperForAdditionalDependencies(T result, List<BaseInfo> objects)
+        public DTOWithDependencies(T result, List<BaseInfo> objects)
         {
             Result = result;
             Objects = objects;

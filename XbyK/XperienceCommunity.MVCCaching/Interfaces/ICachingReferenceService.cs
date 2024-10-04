@@ -1,4 +1,4 @@
-﻿namespace XperienceCommunity.MVCCaching.Interfaces
+﻿namespace MVCCaching
 {
     public interface ICachingReferenceService
     {

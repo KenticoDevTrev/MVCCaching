@@ -5,10 +5,6 @@ using CMS.Websites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using XperienceCommunity.MVCCaching.Exceptions;
-using XperienceCommunity.MVCCaching.Enums;
-using XperienceCommunity.MVCCaching.Interfaces;
-using XperienceCommunity.MVCCaching.Models;
 
 namespace MVCCaching
 {
@@ -487,7 +483,7 @@ namespace MVCCaching
             return CacheHelper.GetCacheDependency(builder.GetKeys().Union(additionalDependencies).ToArray());
         }
 
-        public static ICacheDependencyBuilder AppendDTOWrapperForAdditionalDependencies<T>(this ICacheDependencyBuilder builder, DTOWrapperForAdditionalDependencies<T> dtoWrapper)
+        public static ICacheDependencyBuilder AppendDTOWithDependencies<T>(this ICacheDependencyBuilder builder, DTOWithDependencies<T> dtoWrapper)
         {
             return builder.AddKeys(dtoWrapper.AdditionalDependencies)
                 .ContentItems(dtoWrapper.ContentItems)

@@ -4,12 +4,12 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Websites;
 using CMS.Websites.Routing;
+using MVCCaching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using XperienceCommunity.MVCCaching.Interfaces;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {

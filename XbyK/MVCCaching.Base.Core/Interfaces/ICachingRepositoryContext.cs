@@ -1,6 +1,6 @@
 ﻿namespace MVCCaching
 {
-    public interface ICacheRepositoryContext
+    public interface ICacheRepositoryContext : ICacheKey
     {
         bool CacheEnabled();
         bool PreviewEnabled();

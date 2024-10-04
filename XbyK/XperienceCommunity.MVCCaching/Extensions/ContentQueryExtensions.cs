@@ -8,7 +8,7 @@ namespace Kentico.Content.Web.Mvc
         /// <summary>
         /// Sets Culture, Combine with Default Culture.
         /// 
-        /// For the Cache Key, make sure to also include ICacheRepositoryContext.ToCacheRepositoryContextNameIdentifier(), as well as any SiteName, which normally are automatically added when using IPageRetriever
+        /// For the Cache Key, make sure to also include ICacheRepositoryContext.ToCacheNameIdentifier(), as well as any SiteName, which normally are automatically added when using IPageRetriever
         /// </summary>
         /// <param name="baseQuery">The ContentItemQueryBuilder Query</param>
         /// <param name="context">The ICacheRepositoryContext implementation</param>
@@ -22,7 +22,7 @@ namespace Kentico.Content.Web.Mvc
         /// <summary>
         /// Sets the Preview Mode onto your ContentQueryExecutionOptions.
         /// 
-        /// For the Cache Key, make sure to also include ICacheRepositoryContext.ToCacheRepositoryContextNameIdentifier(), as well as any SiteName, which normally are automatically added when using IPageRetriever
+        /// For the Cache Key, make sure to also include ICacheRepositoryContext.ToCacheNameIdentifier(), as well as any SiteName, which normally are automatically added when using IPageRetriever
         /// </summary>
         /// <param name="options">The ContentQueryExecutionOptions</param>
         /// <param name="context">The ICacheRepositoryContext implementation</param>

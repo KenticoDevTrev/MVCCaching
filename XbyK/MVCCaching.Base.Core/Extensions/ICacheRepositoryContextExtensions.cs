@@ -1,4 +1,6 @@
-﻿namespace MVCCaching
+﻿using System;
+
+namespace MVCCaching
 {
     public static class ICacheRepositoryContextExtensions
     {
@@ -9,6 +11,7 @@
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
+        [Obsolete("ICacheRepositoryContext now inherits from ICacheKey, so you can use the .ToCacheNameIdentifier() now instead.")]
         public static string ToCacheRepositoryContextNameIdentifier(this ICacheRepositoryContext context)
         {
             return $"context-{context.CurrentCulture()}-{context.PreviewEnabled()}";

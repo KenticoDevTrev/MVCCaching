@@ -1,10 +1,8 @@
 ﻿using CMS.ContentEngine;
-using MVCCaching;
 using System;
 using System.Collections.Generic;
-using XperienceCommunity.MVCCaching.Enums;
 
-namespace XperienceCommunity.MVCCaching.Extensions.Obsolete
+namespace MVCCaching.Obsolete
 {
     /// <summary>
     /// These are obsolete ones, used for transitioning between KX13 and XbyK, you can include this namespace and to get guidance on where to migrate your dependencies, none of these perform any actions on the ICacheDependencyBuilder and simply return the builder.
