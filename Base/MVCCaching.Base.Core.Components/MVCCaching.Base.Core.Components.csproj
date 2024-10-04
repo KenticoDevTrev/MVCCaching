@@ -1,26 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-	  <Description>Tag Helper Components used with MVCCaching.Base.Core</Description>
+	  <Description>Tag Helper Components used with MVCCaching.Base.Core.  This one is built for .net 8.0</Description>
 	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
 	  <Title>MVCCaching (Base) Components</Title>
-	  <Version>4.4.0</Version>
+	  <Version>8.0.0</Version>
 	  <Authors>Trevor Fayas</Authors>
-	  <Company>Heartland Business Systems</Company>
-	  <Copyright>2022 Heartland Business Systems</Copyright>
+	  <Company>KenticoDevTrev</Company>
+	  <Copyright>2024 Trevor Fayas</Copyright>
 	  <PackageProjectUrl>https://github.com/KenticoDevTrev/MVCCaching</PackageProjectUrl>
-	  <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
+	  <PackageIcon>DotNetIcon-128x128.png</PackageIcon>
 	  <RepositoryType>git</RepositoryType>
 	  <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-	  <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
-	  <PackageReleaseNotes>Added <cache-dependency-mvc /> tag helper as a way to pass cache dependency keys into cache via the ICacheDependenciesAdapater</PackageReleaseNotes>
+	  <PackageTags>MVCCaching</PackageTags>
+	  <PackageReleaseNotes>Updated to .net 8.0</PackageReleaseNotes>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <PackageReadmeFile>README_Base.md</PackageReadmeFile>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\hbs-favicon-96x96.png">
+    <None Include="..\..\..\DotNetIcon-128x128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README_Base.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -33,7 +39,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
-    <PackageReference Include="MVCCaching.Base.Core" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
   </ItemGroup>
 
 </Project>

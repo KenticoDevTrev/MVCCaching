@@ -3,7 +3,7 @@
 # Migrating from MVCCaching.Kentico[/.Core ]
 MVCCaching.Kentico started out back in the Kentico 12 MVC days, and was my first attempt at transitioning from the Portal Engine's way of handling Dependency Keys (often found in Webparts).
 
-As 13 came out, this took was upgraded.  Dependency Injection still difficult in .Net 4.8, but i attempted to carry over much of that functionality originally in the MVCCaching.Kentico.
+As 13 came out, this tool was upgraded.  Dependency Injection still difficult in .Net 4.8, but i attempted to carry over much of that functionality originally in the MVCCaching.Kentico.
 
 With KX13 .Net Core, and new interfaces such as `IProgressiveCache` and `IPageRetriever` available, much of the functionality pieces of the MVCCaching became outdated, and not recommended.
 

@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>MVCCaching (Base)</Title>
+    <Version>4.5.0</Version>
+    <PackageId>MVCCaching.Base.Core</PackageId>
+    <Authors>Trevor Fayas</Authors>
+    <Company>KenticoDevTrev</Company>
+    <PackageProjectUrl>https://github.com/KenticoDevTrev/MVCCaching</PackageProjectUrl>
+    <Description>Base Attribute and Intefaces for MVC Caching to be implemented with.    Designed for XperienceCommunity.MVCCaching.Core and XperienceCommunity.DevTools.MVCCaching code files found on github.com, but could be extended to other uses.</Description>
+    <Copyright>2024 Trevor Fayas</Copyright>
+    <PackageIcon>DotNetIcon-128x128.png</PackageIcon>
+    <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
+    <PackageReleaseNotes>Made the ICacheRepository inherit from ICacheKey so the normal .ToCacheNameIdentifier() would work properly.</PackageReleaseNotes>
+    <PackageTags>MVCCaching</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README_Base.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\DotNetIcon-128x128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README_Base.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.1.8" />
+  </ItemGroup>
+
+</Project>

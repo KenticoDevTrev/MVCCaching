@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Trevor Fayas @KenticoDevTrev</Authors>
+    <Company>Kentico Community</Company>
+    <Description>Caching interfaces and extensions for Xperience by Kentico .net 8.0 MVC Sites</Description>
+    <PackageProjectUrl>https://raw.githubusercontent.com/KenticoDevTrev</PackageProjectUrl>
+    <PackageIcon>kentico-icon-128x128.png</PackageIcon>
+    <Version>1.0.0</Version>
+    <Copyright>Trevor Fayas</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://raw.githubusercontent.com/KenticoDevTrev</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Xperience, Kentico, XbyK, Caching</PackageTags>
+    <PackageReleaseNotes>Refactored for Xperience by Kentico</PackageReleaseNotes>
+    <PackageId>XperienceCommunity.DevTools.MVCCaching</PackageId>
+    <AssemblyName>$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
+    <Product>XperienceCommunity.DevTools.MVCCaching</Product>
+    <PackAsTool>False</PackAsTool>
+    <RootNamespace>MVCCaching</RootNamespace>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.WebApp" Version="29.5.2" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\..\..\kentico-icon-128x128.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Base\MVCCaching.Base.Core.Components\MVCCaching.Base.Core.Components.csproj" />
+	  <ProjectReference Include="..\..\Base\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
+	</ItemGroup>
+
+</Project>

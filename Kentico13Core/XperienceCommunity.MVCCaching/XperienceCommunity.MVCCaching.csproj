@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Authors>Trevor Fayas @ HBS.Net</Authors>
-    <Company>Heartland Business Systems</Company>
+    <Authors>Trevor Fayas</Authors>
+    <Company>KenticoDevTrev</Company>
     <Description>Caching interfaces and extensions for Kentico Xperience .net 5.0 MVC Sites</Description>
     <PackageProjectUrl>https://raw.githubusercontent.com/KenticoDevTrev</PackageProjectUrl>
-    <PackageIcon>hbs-favicon-96x96.png</PackageIcon>
+    <PackageIcon>kentico-icon-128x128.png</PackageIcon>
     <Version>13.16.4</Version>
-    <Copyright>Heartland Business Systems</Copyright>
-    <PackageReadmeFile></PackageReadmeFile>
+    <Copyright>2024 Trevor Fayas</Copyright>
+    <PackageReadmeFile>README_KX13.md</PackageReadmeFile>
     <RepositoryUrl>https://raw.githubusercontent.com/KenticoDevTrev</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Xperience, Kentico, Xperience 13, Caching</PackageTags>
@@ -27,7 +27,11 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="..\..\..\hbs-favicon-96x96.png">
+	  <None Include="..\..\..\kentico-icon-128x128.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README_KX13.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
