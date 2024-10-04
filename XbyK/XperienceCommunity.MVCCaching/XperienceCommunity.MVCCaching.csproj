@@ -20,6 +20,7 @@
     <Product>XperienceCommunity.DevTools.MVCCaching</Product>
     <PackAsTool>False</PackAsTool>
     <RootNamespace>MVCCaching</RootNamespace>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,8 +41,8 @@
 	  </None>
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\MVCCaching.Base.Core.Components\MVCCaching.Base.Core.Components.csproj" />
-	  <ProjectReference Include="..\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
+	  <ProjectReference Include="..\..\Base\MVCCaching.Base.Core.Components\MVCCaching.Base.Core.Components.csproj" />
+	  <ProjectReference Include="..\..\Base\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
 	</ItemGroup>
 
 </Project>

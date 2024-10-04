@@ -33,6 +33,12 @@ Optionally add the Tag Helper for the MVCCaching.Base.Core.Components tag helper
 @addTagHelper *, MVCCaching.Base.Core.Components
 ```
 
+## Library Version Matrix
+
+| Xperience Version | Library Version |
+| ----------------- | --------------- |
+| >= 29.5.0         | 1.x             |
+
 # Usage
 
 ## Caching in Xperience / MVC

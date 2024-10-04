@@ -13,13 +13,19 @@
     <PackageIcon>DotNetIcon-128x128.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
     <PackageReleaseNotes>Made the ICacheRepository inherit from ICacheKey so the normal .ToCacheNameIdentifier() would work properly.</PackageReleaseNotes>
-    <PackageTags>Xperience, Kentico, MVCCaching</PackageTags>
+    <PackageTags>MVCCaching</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README_Base.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\..\DotNetIcon-128x128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README_Base.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
