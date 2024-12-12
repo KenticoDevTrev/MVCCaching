@@ -153,7 +153,7 @@ namespace MVCCaching
             return builder;
         }
 
-        public static ICacheDependencyBuilder ContentItemOnLanguage(this ICacheDependencyBuilder builder, IContentItemFieldsSource page, ICachingReferenceService cachingLanguageService)
+        public static ICacheDependencyBuilder ContentItemOnLanguage(this ICacheDependencyBuilder builder, IContentItemFieldsSource page, ICacheReferenceService cachingLanguageService)
         {
             var language = cachingLanguageService.GetLanguageNameById(page.SystemFields.ContentItemCommonDataContentLanguageID);
             if (page.SystemFields.ContentItemID > 0) {
@@ -165,7 +165,7 @@ namespace MVCCaching
             }
             throw new CacheDependencyMissingDataException("No ContentItemID, ContentItemGUID, or ContentItemName found, cannot cache, please correct query to include at least one of these.");
         }
-        public static ICacheDependencyBuilder ContentItemsOnLanguage(this ICacheDependencyBuilder builder, IEnumerable<IContentItemFieldsSource> pages, ICachingReferenceService cachingLanguageService)
+        public static ICacheDependencyBuilder ContentItemsOnLanguage(this ICacheDependencyBuilder builder, IEnumerable<IContentItemFieldsSource> pages, ICacheReferenceService cachingLanguageService)
         {
             foreach (var page in pages) {
                 builder.ContentItemOnLanguage(page, cachingLanguageService);
@@ -243,7 +243,7 @@ namespace MVCCaching
 
         public static ICacheDependencyBuilder WebPagePath(this ICacheDependencyBuilder builder, string path, PathTypeEnum type = PathTypeEnum.Explicit) => WebPagePath(builder, path, builder.SiteName(), type: type);
 
-        public static ICacheDependencyBuilder WebPagePath(this ICacheDependencyBuilder builder, IWebPageFieldsSource webpage, ICachingReferenceService cachingReferenceService, PathTypeEnum type = PathTypeEnum.Explicit)
+        public static ICacheDependencyBuilder WebPagePath(this ICacheDependencyBuilder builder, IWebPageFieldsSource webpage, ICacheReferenceService cachingReferenceService, PathTypeEnum type = PathTypeEnum.Explicit)
         {
             if (string.IsNullOrWhiteSpace(webpage.SystemFields.WebPageItemTreePath)) {
                 throw new CacheDependencyMissingDataException("WebPageItemTreePath is empty, cannot cache, please correct query to include both of this field.");
@@ -284,7 +284,7 @@ namespace MVCCaching
 
         public static ICacheDependencyBuilder WebPagePathOnLanguage(this ICacheDependencyBuilder builder, string path, string language, PathTypeEnum type = PathTypeEnum.Explicit) => WebPagePathOnLanguage(builder, path, builder.SiteName(), language, type: type);
 
-        public static ICacheDependencyBuilder WebPagePathOnLanguage(this ICacheDependencyBuilder builder, IWebPageFieldsSource webpage, ICachingReferenceService cachingReferenceService, PathTypeEnum type = PathTypeEnum.Explicit)
+        public static ICacheDependencyBuilder WebPagePathOnLanguage(this ICacheDependencyBuilder builder, IWebPageFieldsSource webpage, ICacheReferenceService cachingReferenceService, PathTypeEnum type = PathTypeEnum.Explicit)
         {
             if (string.IsNullOrWhiteSpace(webpage.SystemFields.WebPageItemTreePath)) {
                 throw new CacheDependencyMissingDataException("WebPageItemTreePath is empty, cannot cache, please correct query to include both of this field.");
@@ -347,14 +347,14 @@ namespace MVCCaching
             throw new CacheDependencyMissingDataException("No WebPageItemID, WebPageItemGUID, or WebPageItemName found, cannot cache, please correct query to include at least one of these.");
         }
 
-        public static ICacheDependencyBuilder WebPagesOnLanguage(this ICacheDependencyBuilder builder, IEnumerable<IWebPageFieldsSource> pages, ICachingReferenceService cachingLanguageService)
+        public static ICacheDependencyBuilder WebPagesOnLanguage(this ICacheDependencyBuilder builder, IEnumerable<IWebPageFieldsSource> pages, ICacheReferenceService cachingLanguageService)
         {
             foreach (var page in pages) {
                 builder.WebPageOnLanguage(page, cachingLanguageService);
             }
             return builder;
         }
-        public static ICacheDependencyBuilder WebPageOnLanguage(this ICacheDependencyBuilder builder, IWebPageFieldsSource page, ICachingReferenceService cachingLanguageService)
+        public static ICacheDependencyBuilder WebPageOnLanguage(this ICacheDependencyBuilder builder, IWebPageFieldsSource page, ICacheReferenceService cachingLanguageService)
         {
             if (page.SystemFields.WebPageItemID > 0) {
                 return builder.WebPagesOnLanguage([page.SystemFields.WebPageItemID], cachingLanguageService.GetLanguageNameById(page.SystemFields.ContentItemCommonDataContentLanguageID));

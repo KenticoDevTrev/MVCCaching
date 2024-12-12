@@ -7,18 +7,20 @@ using CMS.Websites.Routing;
 using MVCCaching;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {
-    public class CachingReferenceService(IProgressiveCache progressiveCache,
+    public class CacheReferenceService(IProgressiveCache progressiveCache,
                                          IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider,
                                          IWebsiteChannelContext websiteChannelContext,
                                          IInfoProvider<ChannelInfo> channelInfoProvider,
                                          ILinkedItemsDependencyAsyncRetriever linkedItemsDependencyAsyncRetriever,
-                                         IWebPageLinkedItemsDependencyAsyncRetriever webPageLinkedItemsDependencyAsyncRetriever) : ICachingReferenceService
+                                         IWebPageLinkedItemsDependencyAsyncRetriever webPageLinkedItemsDependencyAsyncRetriever,
+                                         IContentLanguageRetriever contentLanguageRetriever) : ICacheReferenceService
     {
         public IProgressiveCache ProgressiveCache { get; } = progressiveCache;
         public IInfoProvider<ContentLanguageInfo> ContentLanguageInfoProvider { get; } = contentLanguageInfoProvider;
@@ -26,6 +28,7 @@ namespace XperienceCommunity.MVCCaching.Implementations
         public IInfoProvider<ChannelInfo> ChannelInfoProvider { get; } = channelInfoProvider;
         public ILinkedItemsDependencyAsyncRetriever LinkedItemsDependencyAsyncRetriever { get; } = linkedItemsDependencyAsyncRetriever;
         public IWebPageLinkedItemsDependencyAsyncRetriever WebPageLinkedItemsDependencyAsyncRetriever { get; } = webPageLinkedItemsDependencyAsyncRetriever;
+        public IContentLanguageRetriever ContentLanguageRetriever { get; } = contentLanguageRetriever;
 
         public string GetChannelNameByChannelId(int channelId)
         {
@@ -62,6 +65,7 @@ namespace XperienceCommunity.MVCCaching.Implementations
 
         public string GetDefaultLanguageName(int websiteChannelId)
         {
+            var defaultContentLanguage = GetDefaultContentLanguage();
             return ProgressiveCache.Load(cs => {
                 if (cs.Cached) {
                     cs.CacheDependency = CacheHelper.GetCacheDependency($"{WebsiteChannelInfo.OBJECT_TYPE}|byid|{websiteChannelId}");
@@ -72,8 +76,20 @@ namespace XperienceCommunity.MVCCaching.Implementations
                     .WhereEquals(nameof(WebsiteChannelInfo.WebsiteChannelID), websiteChannelId)
                     .Columns(nameof(ContentLanguageInfo.ContentLanguageName))
                     .GetEnumerableTypedResult()
-                    .FirstOrDefault()?.ContentLanguageName ?? String.Empty; // Should never be empty as Website Channel's Primary Language ID is a required non null foreign key
-            }, new CacheSettings(1440, "GetDefaultLanguageName_MVCCaching", websiteChannelId));
+                    .FirstOrDefault()?.ContentLanguageName ?? defaultContentLanguage; // Should never be empty as Website Channel's Primary Language ID is a required non null foreign key
+            }, new CacheSettings(1440, "GetDefaultLanguageName_MVCCaching", websiteChannelId, defaultContentLanguage));
+        }
+
+        private string GetDefaultContentLanguage()
+        {
+            return ProgressiveCache.Load(cs => {
+                if (cs.Cached) {
+                    cs.CacheDependency = CacheHelper.GetCacheDependency($"{ContentLanguageInfo.OBJECT_TYPE}|all");
+                }
+                var query = $"select {nameof(ContentLanguageInfo.ContentLanguageName)} from CMS_ContentLanguage where {nameof(ContentLanguageInfo.ContentLanguageIsDefault)} = 1";
+                var rows = ConnectionHelper.ExecuteQuery(query, [], QueryTypeEnum.SQLQuery).Tables[0].Rows.Cast<DataRow>();
+                return rows.Any() ? (string)rows.First()[nameof(ContentLanguageInfo.ContentLanguageName)] : "en";
+            }, new CacheSettings(1440, "GetDefaultContentLanguage_MVCCaching"));
         }
 
         public string GetLanguageNameById(int languageId)
