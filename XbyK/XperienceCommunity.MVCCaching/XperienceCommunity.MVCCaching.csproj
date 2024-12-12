@@ -5,16 +5,16 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Trevor Fayas @KenticoDevTrev</Authors>
     <Company>Kentico Community</Company>
-    <Description>Caching interfaces and extensions for Xperience by Kentico .net 8.0 MVC Sites</Description>
+    <Description>Adjusted Get Default Language to fall back to Content Default Language.  Changed ICachingReferenceService to ICacheReferenceService to fit other ICache motif.</Description>
     <PackageProjectUrl>https://raw.githubusercontent.com/KenticoDevTrev</PackageProjectUrl>
     <PackageIcon>kentico-icon-128x128.png</PackageIcon>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
     <Copyright>Trevor Fayas</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://raw.githubusercontent.com/KenticoDevTrev</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Xperience, Kentico, XbyK, Caching</PackageTags>
-    <PackageReleaseNotes>Refactored for Xperience by Kentico</PackageReleaseNotes>
+    <PackageReleaseNotes>Updated to XbyK 30</PackageReleaseNotes>
     <PackageId>XperienceCommunity.DevTools.MVCCaching</PackageId>
     <AssemblyName>$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
     <Product>XperienceCommunity.DevTools.MVCCaching</Product>
@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kentico.Xperience.WebApp" Version="29.5.2" />
+    <PackageReference Include="Kentico.Xperience.WebApp" Version="30.0.0" />
   </ItemGroup>
 
 	<ItemGroup>
