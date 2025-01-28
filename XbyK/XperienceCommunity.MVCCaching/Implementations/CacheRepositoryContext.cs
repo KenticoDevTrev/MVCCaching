@@ -1,22 +1,27 @@
 ﻿using CMS.Base;
+using CMS.ContentEngine;
 using CMS.Core;
+using CMS.DataEngine;
 using CMS.Websites.Routing;
 using Kentico.Content.Web.Mvc.Routing;
 using Microsoft.AspNetCore.Http;
 using MVCCaching;
 using System;
+using System.Linq;
 
 namespace XperienceCommunity.MVCCaching.Implementations
 {
     public class CacheRepositoryContext : ICacheRepositoryContext
     {
+        private readonly IInfoProvider<ContentLanguageInfo> _contentLanguageInfoProvider;
 
-        public CacheRepositoryContext(IHttpContextAccessor httpContextAccessor, IWebsiteChannelContext websiteChannelContext, IPreferredLanguageRetriever preferredLanguageRetriever, ISettingsService settingsService)
+        public CacheRepositoryContext(IHttpContextAccessor httpContextAccessor, IWebsiteChannelContext websiteChannelContext, IPreferredLanguageRetriever preferredLanguageRetriever, ISettingsService settingsService, IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider)
         {
             HttpContextAccessor = httpContextAccessor;
             WebsiteChannelContext = websiteChannelContext;
             PreferredLanguageRetriever = preferredLanguageRetriever;
             SettingsService = settingsService;
+            _contentLanguageInfoProvider = contentLanguageInfoProvider;
         }
 
         public IHttpContextAccessor HttpContextAccessor { get; }
@@ -35,7 +40,8 @@ namespace XperienceCommunity.MVCCaching.Implementations
                 return PreferredLanguageRetriever.Get();
             } catch(Exception)
             {
-                return System.Globalization.CultureInfo.CurrentCulture.Name;
+                return _contentLanguageInfoProvider.Get().WhereEquals(nameof(ContentLanguageInfo.ContentLanguageIsDefault), 1).GetEnumerableTypedResult().FirstOrDefault()?.ContentLanguageName ??
+                System.Globalization.CultureInfo.CurrentCulture.Name.Split("-")[0];
             }
         }
 

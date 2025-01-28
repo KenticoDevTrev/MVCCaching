@@ -8,13 +8,13 @@
     <Description>Adjusted Get Default Language to fall back to Content Default Language.  Changed ICachingReferenceService to ICacheReferenceService to fit other ICache motif.</Description>
     <PackageProjectUrl>https://raw.githubusercontent.com/KenticoDevTrev</PackageProjectUrl>
     <PackageIcon>kentico-icon-128x128.png</PackageIcon>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Copyright>Trevor Fayas</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://raw.githubusercontent.com/KenticoDevTrev</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Xperience, Kentico, XbyK, Caching</PackageTags>
-    <PackageReleaseNotes>Updated to XbyK 30</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed fallback language to be the first Content Language instead of the current culture</PackageReleaseNotes>
     <PackageId>XperienceCommunity.DevTools.MVCCaching</PackageId>
     <AssemblyName>$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
     <Product>XperienceCommunity.DevTools.MVCCaching</Product>
