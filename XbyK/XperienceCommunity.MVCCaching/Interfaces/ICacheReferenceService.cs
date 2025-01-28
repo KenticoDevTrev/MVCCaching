@@ -1,6 +1,6 @@
 ﻿namespace MVCCaching
 {
-    public interface ICachingReferenceService
+    public interface ICacheReferenceService
     {
         /// <summary>
         /// Gets the Language Name give the Content Language ID, useful since most Dependency Keys for language are by name but the ID is returned in the System Fields

@@ -61,5 +61,10 @@ namespace XperienceCommunity.MVCCaching.Implementations
                 return false;
             }
         }
+
+        public string GetCacheKey()
+        {
+            return $"context-{CurrentCulture()}-{PreviewEnabled()}";
+        }
     }
 }

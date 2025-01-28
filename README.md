@@ -37,7 +37,8 @@ Optionally add the Tag Helper for the MVCCaching.Base.Core.Components tag helper
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
-| >= 29.5.0         | 1.x             |
+| >= 30.0.0         | 2.x             |
+|    29.5.0-29.7.*  | 1.x             |
 
 # Usage
 

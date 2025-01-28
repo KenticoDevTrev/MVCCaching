@@ -20,7 +20,8 @@ namespace MVCCaching
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependencyBuilderFactory, CacheDependencyBuilderFactory>()
                 .AddScoped<ICacheRepositoryContext, CacheRepositoryContext>()
-                .AddScoped<ICacheTagHelperService, CacheTagHelperService>();
+                .AddScoped<ICacheTagHelperService, CacheTagHelperService>()
+                .AddScoped<ICacheReferenceService, CacheReferenceService>();
                 //.AddSingleton<IContentItemMetadataProvider, ContentItemMetadataProvider>(); // Don't think I can recreate this for XbyK, probably not needed though.
         }
 
