@@ -40,6 +40,17 @@ Optionally add the Tag Helper for the MVCCaching.Base.Core.Components tag helper
 | >= 30.0.0         | 2.x             |
 |    29.5.0-29.7.*  | 1.x             |
 
+### CONFLICT NOTE ON 30.3.0
+As of Kentico Xperience 30.3.0 refresh, Kentico has released their own ICacheDependencyBuilderFactory, which sadly conflicts with the name of mine.  Their version does not support the `ICacheScope`, Web Channel Context, and thus we cannot migrate over to it yet.   I have put in a request to add these features so I can rebuild the MVCCaching package to leverage Kentico's builder.
+
+Until then, please add this global using to a class at the root of any project giving compilation errors due to the namespace conflict:
+```csharp
+
+// Kentico's new ICacheDependencyBuilderFactor is currently incompatible with Cache Scope, waiting on Kentico to add hooks to allow replacing.
+global using ICacheDependencyBuilderFactory = MVCCaching.ICacheDependencyBuilderFactory;
+
+```
+
 # Usage
 
 ## Caching in Xperience / MVC
