@@ -37,7 +37,8 @@ Optionally add the Tag Helper for the MVCCaching.Base.Core.Components tag helper
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
-| >= 30.0.0         | 2.x             |
+| >= 31.0.0         | 3.x             |
+|    30.0.0-30.12.3 | 2.x             |
 |    29.5.0-29.7.*  | 1.x             |
 
 # Usage
@@ -102,11 +103,11 @@ As mentioned, another issue with dependency keys are that Xperience by Kentico's
 
 Thus, you need to define your cache dependencies **outside** of this interfaces (so the `ICacheDependencyStore` can track them), as well as pass them **into** the Xperience by Kentico `IProgressiveCache` so data-level caching can occur.
 
-MVCCaching introduces the `ICacheDependencyBuilderFactory` interface which has a `Create(bool addKeysToStore = true);` method.  Inject this into your repositories and call this method to retrieve an `ICacheDependencyBuilder` class.
+MVCCaching introduces the `ICacheDependencyScopedBuilderFactory` interface which has a `Create(bool addKeysToStore = true);` method.  Inject this into your repositories and call this method to retrieve an `ICacheDependencyScopedBuilder` class.
 
-This class has a plethora of built in extension methods to accommodate easily define your dependency keys and can easily be extended.
+This class has a plethora of built in extension methods to accommodate easily define your dependency keys and can easily be extended.  You also have access to the `XperienceBuilder` property within which has it's own plethora of extension methods, **BUT BE AWARE** that we cannot see what dependency keys get generated during the Fluent API calls, so you will need to call the `StoreUntracked()` method afterwards which adds any new keys to the Cache Dependency Store (if storing values).
 
-Additionally, it provides a quick `ICacheDependencyBuilder.GetCMSCacheDependency()`
+Additionally, it provides a quick `ICacheDependencyBuilder.GetCMSCacheDependency()` (which calls the `CMSCacheDependency XperienceBuilder.Build()` command)
 
 **SAMPLE**
 ```csharp
@@ -114,8 +115,13 @@ Additionally, it provides a quick `ICacheDependencyBuilder.GetCMSCacheDependency
 public Task<IEnumerable<BlogItem>> GetBlogs(string path)
 {
     // Create the Cache Dependency Builder and set the dependencies
-    var builder = CacheDependencyBuilderFactory.Create()
-        .WebPagePath(path, PathTypeEnum.Children);
+    var builder = CacheDependencyScopedBuilderFactory.Create();
+
+    // Use our extension methods
+    builder.WebPagePath(path, PathTypeEnum.Children);
+    // Or use Xperience's Fluent API, and call the StoreUntracked() to update the scope
+    builder.XperienceBuilder.ForWebPageItems().ByPath(path, PathTypeEnum.Children);
+    builder.StoreUntracked();
 
     var results = ProgressiveCache.LoadAsync(async cs => {
 

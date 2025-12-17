@@ -470,17 +470,17 @@ namespace MVCCaching
         }
         public static ICacheDependencyBuilder ApplyAllDependenciesTo(this ICacheDependencyBuilder builder, Action<string[]> action)
         {
-            action(builder.GetKeys().ToArray());
+            action([.. builder.GetKeys()]);
             return builder;
         }
 
         public static CMSCacheDependency GetCMSCacheDependency(this ICacheDependencyBuilder builder)
         {
-            return CacheHelper.GetCacheDependency(builder.GetKeys().ToArray());
+            return CacheHelper.GetCacheDependency([.. builder.GetKeys()]);
         }
         public static CMSCacheDependency GetCMSCacheDependency(this ICacheDependencyBuilder builder, IEnumerable<string> additionalDependencies)
         {
-            return CacheHelper.GetCacheDependency(builder.GetKeys().Union(additionalDependencies).ToArray());
+            return CacheHelper.GetCacheDependency([.. builder.GetKeys().Union(additionalDependencies)]);
         }
 
         public static ICacheDependencyBuilder AppendDTOWithDependencies<T>(this ICacheDependencyBuilder builder, DTOWithDependencies<T> dtoWrapper)

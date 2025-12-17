@@ -1,6 +1,6 @@
 
 
-# Migrating from XperienceCommunity.MVCCaching 13 to XbyK (29.5.0+) (MVCCaching.Kentico[/.Core ]
+# Migrating from XperienceCommunity.MVCCaching 13 to XbyK (Version 2.0.0) (MVCCaching.Kentico[/.Core ]
 MVCCaching.Kentico started out back in the Kentico 12 MVC days, and was my first attempt at transitioning from the Portal Engine's way of handling Dependency Keys (often found in Webparts).
 
 As 13 came out, this tool was upgraded.  Dependency Injection still difficult in .Net 4.8, but i attempted to carry over much of that functionality originally in the MVCCaching.Kentico.
@@ -10,6 +10,9 @@ With KX13 .Net Core, and new interfaces such as `IProgressiveCache` and `IPageRe
 With Xperience by Kentico not much has changed between 13 and XbyK.  The largest changes have to do with the Extension Methods for Dependency Building and some adjustments to how it handles Channels (formerly Sites) and Members (formerly Users)
 
 This is the migration guide to moving from those systems to XperienceCommunity.MVCCaching
+
+## Go to 2.0.0 first, then to 3.0.0
+Version 3.0.0 of the XperienceCommunity.DevTools.MVCCaching removed obsolete helpers and also requires one more adjustment outlined in the [Migration-XbyK-2.0.0-XbyK-3.0.0](Migration-XbyK-2.0.0-XbyK-3.0.0.md) document.  First migrate to 2.0.0, then take the step to migrate to 3.0.0
 
 # ICacheDependencyBuilder Extension Methods
 As Kentico Xperience 13 used "Node" and "Document", where as Xperience by Kentico has Webpage, ContentItem, many of the extension methods have been remade.  This normally won't impact much as you will be needing to use new APIs anyway.  

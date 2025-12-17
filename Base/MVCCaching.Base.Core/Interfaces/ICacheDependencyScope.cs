@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MVCCaching
+﻿namespace MVCCaching
 {
     /// <summary>
     /// Used to begin a new Cache dependency scope (starts collection of cache dependencies) and then End (which retrieves all cache dependencies set within there)

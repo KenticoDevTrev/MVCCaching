@@ -1,5 +1,6 @@
 ﻿using CMS.Core;
 using Microsoft.Extensions.DependencyInjection;
+using MVCCaching.Implementations;
 using MVCCaching.Internal;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,8 @@ namespace MVCCaching
                 .AddScoped<CacheDependenciesStoreAndScope>()
                 .AddScoped<ICacheDependenciesStore>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
-                .AddScoped<ICacheDependencyBuilderFactory, CacheDependencyBuilderFactory>()
+                .AddScoped<ICacheDependencyScopedBuilder, CacheDependencyScopedBuilder>()
+                .AddScoped<ICacheDependencyScopedBuilderFactory, CacheDependencyScopedBuilderFactory>()
                 .AddScoped<ICacheRepositoryContext, CacheRepositoryContext>()
                 .AddScoped<ICacheTagHelperService, CacheTagHelperService>()
                 .AddScoped<ICacheReferenceService, CacheReferenceService>();
@@ -54,14 +56,7 @@ namespace MVCCaching
                 if (attributes.Length > 0)
                 {
                     var attr = (AutoDependencyInjectionAttribute)attributes[0];
-                    Type implementedType = attr.InterfaceType;
-                    // Grab any interface it implements that isn't ICacheKey
-                    if (implementedType == null)
-                    {
-                        implementedType = type.GetInterfaces().Where(x => !x.Equals(typeof(ICacheKey)))
-                                .FirstOrDefault();
-                    }
-
+                    var implementedType = attr.InterfaceType ?? type.GetInterfaces().Where(x => !x.Equals(typeof(ICacheKey))).FirstOrDefault();
                     if (implementedType != null)
                     {
                         switch (attr.Lifetime)

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>MVCCaching (Base)</Title>
-    <Version>4.5.0</Version>
+    <Version>5.0.0</Version>
     <PackageId>MVCCaching.Base.Core</PackageId>
     <Authors>Trevor Fayas</Authors>
     <Company>KenticoDevTrev</Company>
@@ -12,8 +12,8 @@
     <Copyright>2024 Trevor Fayas</Copyright>
     <PackageIcon>DotNetIcon-128x128.png</PackageIcon>
     <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
-    <PackageReleaseNotes>Made the ICacheRepository inherit from ICacheKey so the normal .ToCacheNameIdentifier() would work properly.</PackageReleaseNotes>
-    <PackageTags>MVCCaching</PackageTags>
+    <PackageReleaseNotes>Updated to Xperience 31.0.0 on packages applicable.</PackageReleaseNotes>
+    <PackageTags>MVCCaching.DevTools</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README_Base.md</PackageReadmeFile>
