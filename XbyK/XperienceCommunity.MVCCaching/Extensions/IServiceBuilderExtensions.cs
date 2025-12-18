@@ -19,7 +19,6 @@ namespace MVCCaching
                 .AddScoped<CacheDependenciesStoreAndScope>()
                 .AddScoped<ICacheDependenciesStore>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
                 .AddScoped<ICacheDependenciesScope>(x => x.GetRequiredService<CacheDependenciesStoreAndScope>())
-                .AddScoped<ICacheDependencyScopedBuilder, CacheDependencyScopedBuilder>()
                 .AddScoped<ICacheDependencyScopedBuilderFactory, CacheDependencyScopedBuilderFactory>()
                 .AddScoped<ICacheRepositoryContext, CacheRepositoryContext>()
                 .AddScoped<ICacheTagHelperService, CacheTagHelperService>()
