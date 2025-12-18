@@ -6,7 +6,7 @@
 	  <Description>Tag Helper Components used with MVCCaching.Base.Core.  This one is built for .net 8.0</Description>
 	  <PackageId>MVCCaching.Base.Core.Components</PackageId>
 	  <Title>MVCCaching (Base) Components</Title>
-	  <Version>8.0.0</Version>
+	  <Version>8.1.0</Version>
 	  <Authors>Trevor Fayas</Authors>
 	  <Company>KenticoDevTrev</Company>
 	  <Copyright>2024 Trevor Fayas</Copyright>
@@ -15,7 +15,7 @@
 	  <RepositoryType>git</RepositoryType>
 	  <RepositoryUrl>https://github.com/KenticoDevTrev/MVCCaching</RepositoryUrl>
 	  <PackageTags>MVCCaching</PackageTags>
-	  <PackageReleaseNotes>Updated to .net 8.0</PackageReleaseNotes>
+	  <PackageReleaseNotes>Updated Base.Core reference</PackageReleaseNotes>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <PackageReadmeFile>README_Base.md</PackageReadmeFile>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -39,10 +39,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MVCCaching.Base.Core\MVCCaching.Base.Core.csproj" />
+    <PackageReference Include="MVCCaching.Base.Core" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
