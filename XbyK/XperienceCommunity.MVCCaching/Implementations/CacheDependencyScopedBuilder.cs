@@ -22,13 +22,14 @@ namespace MVCCaching.Implementations
         {
             SiteCodeName = specificSiteCodeName;
             _builderFactory = builderFactory;
-            XperienceBuilder = builderFactory.Create();
+            XperienceBuilder = _builderFactory.Create();
             AddToDependencyStore = false;
         }
         public CacheDependencyScopedBuilder(string specificSiteCodeName, ICacheDependencyBuilderFactory builderFactory, ICacheDependenciesStore cacheDependenciesStore)
         {
             SiteCodeName = specificSiteCodeName;
-            XperienceBuilder = builderFactory.Create();
+            _builderFactory = builderFactory;
+            XperienceBuilder = _builderFactory.Create();
             _cacheDependenciesStore = cacheDependenciesStore;
             AddToDependencyStore = true;
         }
@@ -38,13 +39,14 @@ namespace MVCCaching.Implementations
             return SiteCodeName ?? "unknownsite";
         }
 
-        public ISet<string> GetKeys() => XperienceBuilder.Build().CacheKeys.ToHashSet();
+        // Currently Build() returns NULL if no keys added...
+        public ISet<string> GetKeys() => (XperienceBuilder.Build()?.CacheKeys ?? []).ToHashSet();
 
         private void Add(string key)
         {
             XperienceBuilder.AddDependency(key);
             _cacheKeys.Add(key);
-            if (AddToDependencyStore) { 
+            if (AddToDependencyStore && _cacheDependenciesStore != null) { 
                 _cacheDependenciesStore.Store([key]);
             }
         }
@@ -58,7 +60,7 @@ namespace MVCCaching.Implementations
                 XperienceBuilder.AddDependency(key);
                 _cacheKeys.Add(key);
             }
-            if(AddToDependencyStore) { 
+            if(AddToDependencyStore && _cacheDependenciesStore != null) { 
                 _cacheDependenciesStore.Store([.. keys]);
             }
         }
@@ -86,7 +88,7 @@ namespace MVCCaching.Implementations
             // get difference of the current Builder and the internal keys and add to dependency store
             var existingKeys = GetKeys();
             var unTrackedKeys = _cacheKeys.Except(existingKeys, StringComparer.OrdinalIgnoreCase);
-            if (AddToDependencyStore) {
+            if (AddToDependencyStore && _cacheDependenciesStore != null) {
                 _cacheDependenciesStore.Store([.. unTrackedKeys]);
             }
         }
